@@ -5,7 +5,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 
-public class Test {
+public class QuadDemo {
 
 	public void start() {
 		try {
@@ -44,7 +44,7 @@ public class Test {
 	}
 
 	public static void main(String[] argv) {
-		Test test = new Test();
+		QuadDemo test = new QuadDemo();
 		test.start();
 	}
 }
