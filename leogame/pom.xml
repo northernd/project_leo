@@ -20,7 +20,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>fi.leoteam.leogame.main.Test</mainClass>
+							<mainClass>fi.leoteam.leogame.main.QuadDemo</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
