@@ -27,7 +27,7 @@ public class QuadDemo {
 			GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
 			// set the color of the quad (R,G,B,A)
-			GL11.glColor3f(0.5f, 0.5f, 1.0f);
+			GL11.glColor3f(0.88f, 0.11f, 2.0f);
 
 			// draw quad
 			GL11.glBegin(GL11.GL_QUADS);
