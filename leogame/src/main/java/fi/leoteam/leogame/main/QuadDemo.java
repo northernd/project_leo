@@ -1,11 +1,14 @@
 package fi.leoteam.leogame.main;
 
+import org.apache.log4j.Logger;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 
 public class QuadDemo {
+	
+	private static Logger log = Logger.getLogger(QuadDemo.class);
 
 	public void start() {
 		try {
@@ -44,6 +47,7 @@ public class QuadDemo {
 	}
 
 	public static void main(String[] argv) {
+		log.debug("starting demo.");
 		QuadDemo test = new QuadDemo();
 		test.start();
 	}
