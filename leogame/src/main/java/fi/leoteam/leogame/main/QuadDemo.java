@@ -15,7 +15,7 @@ public class QuadDemo {
 			e.printStackTrace();
 			System.exit(0);
 		}
-
+		
 		// init OpenGL
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
@@ -31,16 +31,34 @@ public class QuadDemo {
 
 			// draw quad
 			GL11.glBegin(GL11.GL_QUADS);
-			GL11.glVertex2f(100, 100);
-			GL11.glVertex2f(100 + 200, 100);
-			GL11.glVertex2f(100 + 200, 100 + 200);
-			GL11.glVertex2f(100, 100 + 200);
+			GL11.glVertex2f(50, 50);
+			GL11.glVertex2f(60, 55);
+			GL11.glVertex2f(70, 50);
+			GL11.glVertex2f(60, 45);
 			GL11.glEnd();
-
+			
+			//drawQuadReformed(50, 50, 50);
 			Display.update();
+			
 		}
 
 		Display.destroy();
+	}
+	
+	private void drawQuadReformed(int x, int y, float length) {
+		float kulma = new Float(26.57);
+		float puolikas, korkeus;
+		puolikas = (float)Math.sin(kulma)*length;
+		korkeus = (float)Math.cos(kulma)*length;
+		//System.out.println("k: "+korkeus+" p: "+puolikas);
+		
+		GL11.glBegin(GL11.GL_QUADS);
+		GL11.glVertex2f(x, y);
+		GL11.glVertex2f(x+puolikas, y+korkeus);
+		GL11.glVertex2f(x+(2*puolikas), y);
+		GL11.glVertex2f(x+puolikas, y-korkeus);
+		GL11.glEnd();
+		
 	}
 
 	public static void main(String[] argv) {
