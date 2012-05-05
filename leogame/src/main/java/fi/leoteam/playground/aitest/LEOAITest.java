@@ -1,5 +1,7 @@
 package fi.leoteam.playground.aitest;
 
+import java.util.ArrayList;
+
 import org.apache.log4j.Logger;
 
 import fi.leoteam.leogame.main.QuadDemo;
@@ -12,7 +14,7 @@ import fi.leoteam.leogame.main.QuadDemo;
 public class LEOAITest {
 	
 	protected static Logger log = Logger.getLogger(LEOAITest.class);
-	private LEOMapGrid map;
+	private LEOMapHandler map;
 
 	/**
 	 * @param args
@@ -24,7 +26,9 @@ public class LEOAITest {
 
 	public LEOAITest() {
 		super();
-		map = new LEOMapGrid();
+		
+		map = new LEOMapHandler();
+		map.printDebugMap();
 	}
 
 }

@@ -5,11 +5,11 @@ public class LEOWorldObject extends LEOEntity {
 	private int id;
 	private String mapMarker;
 
-	public LEOWorldObject(String strId) {
-		super();
+	public LEOWorldObject(String strId, String location) {
+		super(location);
 		this.mapMarker = strId;
-		if (strId.equals(LEOStaticStrings.OBJECT_STRING_NORMAL_TILE)) {
-			this.id = LEOStaticStrings.OBJECT_ID_NORMAL_TILE;
+		if (strId.equals(LEOStaticStrings.OBJECT_STRING_EMPTY)) {
+			this.id = LEOStaticStrings.OBJECT_ID_EMPTY;
 			
 		} else {
 			//Entity is wall

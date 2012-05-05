@@ -5,17 +5,22 @@ public abstract class LEOEntity {
 	private boolean passable = false;
 	private String facing = null;
 	private boolean blockFOV = false;
+	private int[] location = new int[2];
 	
-	public static LEOEntity encodeMapMarkings(String code) {
-		if(code.equals(LEOStaticStrings.OBJECT_STRING_SUSPECT)) {
-			return new LEOCharacter(LEOStaticStrings.OBJECT_STRING_SUSPECT);
-			
-		} else if (code.equals(LEOStaticStrings.OBJECT_STRING_NORMAL_TILE)) {
-			return new LEOWorldObject(code);
+	
+	
+	public LEOEntity(String location) {
+		super();
+		setLocation(location);
+	}
+
+	public static LEOEntity encodeMapMarkings(String code, String location) {
+		if (code.equals(LEOStaticStrings.OBJECT_STRING_EMPTY)) {
+			return new LEOWorldObject(code, location);
 			
 		} else {
 			//Entity is wall
-			return new LEOWorldObject(code);
+			return new LEOWorldObject(code, location);
 		}
 	}
 	
@@ -41,6 +46,24 @@ public abstract class LEOEntity {
 
 	public void setBlockFOV(boolean blockFOV) {
 		this.blockFOV = blockFOV;
+	}
+
+	public int[] getLocation() {
+		return location;
+	}
+	
+	public int getXCoord() {
+		return location[0];
+	}
+	
+	public int getYCoord() {
+		return location[1];
+	}
+
+	public void setLocation(String str) {
+		String[] tmp = str.split("-");
+		location[0] = Integer.parseInt(tmp[0]);
+		location[1] = Integer.parseInt(tmp[1]);
 	}
 
 	public abstract String toString();
