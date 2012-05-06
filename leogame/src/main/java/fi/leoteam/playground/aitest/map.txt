@@ -1,6 +1,6 @@
 //Hyvin kevyt "kenttä", AI:n testausta varten.
-//Sisältö: //-merkillä alkavat rivit sivuutetaan (kommentit), @-merkillä alkava sivu
-//kertoo AI-hahmon/hahmojen (käytännössä epäiltyjen) aloitussijainnit. X-koord. annetaan ensin, sitten väliviiva, ja sitten y-koord.
+//Sisältö: //-merkillä alkavat rivit sivuutetaan (kommentit), @-merkillä alkava rivi
+//kertoo AI-hahmon/hahmojen (käytännössä epäiltyjen) aloitussijainnit. Y-koord. annetaan ensin, sitten väliviiva, ja sitten x-koord.
 //Esimerkiksi: @3-3 -> jos halutaan useampi hahmo, sijainnit erotetaan pilkulla, esim. @1-2,2-1
 //Merkit X ja . ja N katsotaan kuuluvaksi karttaan (X = seinä, . = tyhjä ruutu, N = NoGo-alue). Erotetaan jokaisella rivillä jokainen ruutu pilkulla
 //Parillisten rivien tulee olla 1 yksikön pidempiä kuin parittomien
