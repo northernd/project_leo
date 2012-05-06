@@ -2,14 +2,15 @@
 //Sisältö: //-merkillä alkavat rivit sivuutetaan (kommentit), @-merkillä alkava sivu
 //kertoo AI-hahmon/hahmojen (käytännössä epäiltyjen) aloitussijainnit. X-koord. annetaan ensin, sitten väliviiva, ja sitten y-koord.
 //Esimerkiksi: @3-3 -> jos halutaan useampi hahmo, sijainnit erotetaan pilkulla, esim. @1-2,2-1
-//Merkit X ja . katsotaan kuuluvaksi karttaan (X = seinä, . = tyhjä ruutu). Erotetaan jokaisella rivillä jokainen ruutu pilkulla
+//Merkit X ja . ja N katsotaan kuuluvaksi karttaan (X = seinä, . = tyhjä ruutu, N = NoGo-alue). Erotetaan jokaisella rivillä jokainen ruutu pilkulla
 //Rivien tulee olla yhtä pitkiä
-@7-8
-X,.,.,.,X,.,.,.,.,X,X,X,X,X
-X,.,.,.,X,.,.,.,.,X,.,.,.,X
-X,.,.,.,X,.,.,.,.,X,.,.,.,X
-X,.,.,.,X,X,X,X,X,X,.,.,.,X
-X,.,.,.,.,.,.,.,.,.,.,.,.,X
-X,.,.,.,.,.,.,.,.,.,.,.,.,X
-X,.,.,.,.,.,.,.,.,.,.,.,.,X
-X,X,X,X,X,X,X,X,.,.,.,X,X,X
+@7-0
+N,N,X,N,X,.,.,.,.
+N,X,X,X,X,.,.,.
+N,X,.,X,N,X,.,.,.
+X,.,X,N,X,.,X,.
+X,.,X,N,X,.,X,X,.
+.,.,X,X,.,X,N,X
+.,.,.,X,.,X,N,N,X
+.,.,.,.,.,X,N,N
+.,.,.,.,.,.,X,N,N

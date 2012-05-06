@@ -15,13 +15,7 @@ public abstract class LEOEntity {
 	}
 
 	public static LEOEntity encodeMapMarkings(String code, String location) {
-		if (code.equals(LEOStaticStrings.OBJECT_STRING_EMPTY)) {
-			return new LEOWorldObject(code, location);
-			
-		} else {
-			//Entity is wall
-			return new LEOWorldObject(code, location);
-		}
+		return new LEOWorldObject(code, location);
 	}
 	
 	public boolean isPassable() {

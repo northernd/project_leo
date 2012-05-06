@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class LEOMapGrid {
 	
 	private ArrayList<ArrayList<LEOEntity>> mapgrid = new ArrayList<ArrayList<LEOEntity>>();
-	private int rowLength;
+	//private int rowLength;
 
 	public LEOMapGrid() {
 		super();
@@ -42,9 +42,11 @@ public class LEOMapGrid {
 					} else {
 						String[] row = line.split(",");
 						
-						if(mapgrid.size() == 0) {
+						/*if(mapgrid.size() == 0) {
 							rowLength = row.length;
-						}
+						}*/
+						
+						int rowLength = row.length;
 	
 						ArrayList<LEOEntity> tmp = new ArrayList<LEOEntity>(rowLength);
 						for(int i = 0; i < rowLength; i++) {
@@ -72,6 +74,9 @@ public class LEOMapGrid {
 		StringBuilder map = new StringBuilder("");
 		for(int i = 0; i < mapgrid.size(); i++) {
 			ArrayList<LEOEntity> tmp = mapgrid.get(i);
+			if(i%2 != 0) {
+				map.append(" ");
+			}
 			for(int j = 0; j < tmp.size(); j++) {
 				map.append(tmp.get(j).toString());
 				
@@ -93,9 +98,9 @@ public class LEOMapGrid {
 		this.mapgrid = mapgrid;
 	}
 
-	public int getRowLength() {
+	/*public int getRowLength() {
 		return rowLength;
-	}
+	}*/
 	
 	public LEOEntity getAdjacentN(int[] loc) {
 		try {
@@ -159,5 +164,32 @@ public class LEOMapGrid {
 		} catch (NullPointerException e) {
 			return null;
 		}
+	}
+	
+	private LEOEntity addEntityToLocation(int[] loc, LEOEntity entity) {
+		LEOEntity tmp = mapgrid.get(loc[0]).get(loc[1]);
+		
+		mapgrid.get(loc[0]).set(loc[1], entity);
+		
+		return tmp;
+	}
+	
+	public String getMapWithCharacters(ArrayList<LEOCharacter> characters) {
+		ArrayList<ArrayList<LEOEntity>> mapgrid = this.mapgrid;
+		String result = "";
+		ArrayList<LEOEntity> oldOnes = new ArrayList<LEOEntity>();
+		for(int i = 0; i < characters.size(); i++) {
+			LEOCharacter tmp = characters.get(i);
+			int[] loc = tmp.getLocation();
+			oldOnes.add(addEntityToLocation(loc, tmp));
+		}
+		
+		result = getMapAsString().toString();
+		
+		for(int i = 0; i < oldOnes.size(); i++) {
+			addEntityToLocation(oldOnes.get(i).getLocation(), oldOnes.get(i));
+		}
+		
+		return result;
 	}
 }

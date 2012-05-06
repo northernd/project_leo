@@ -9,10 +9,12 @@ public class LEOStaticStrings {
 	
 	protected static String OBJECT_STRING_WALL = "X";
 	protected static String OBJECT_STRING_EMPTY = ".";
+	protected static String OBJECT_STRING_NOGO = "N";
 	protected static String OBJECT_STRING_SUSPECT = "S";
 	
 	protected static int OBJECT_ID_WALL = 1;
 	protected static int OBJECT_ID_EMPTY = 0;
+	protected static int OBJECT_ID_NOGO = 2;
 
 
 }

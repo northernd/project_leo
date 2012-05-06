@@ -28,7 +28,8 @@ public class LEOAITest {
 		super();
 		
 		map = new LEOMapHandler();
-		map.printDebugMap();
+		map.printDebugMap(true);
+		//map.printDebugMap(false);
 	}
 
 }

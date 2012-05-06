@@ -11,6 +11,9 @@ public class LEOWorldObject extends LEOEntity {
 		if (strId.equals(LEOStaticStrings.OBJECT_STRING_EMPTY)) {
 			this.id = LEOStaticStrings.OBJECT_ID_EMPTY;
 			
+		} else if (strId.equals(LEOStaticStrings.OBJECT_STRING_NOGO)) {
+			this.id = LEOStaticStrings.OBJECT_ID_NOGO;
+			
 		} else {
 			//Entity is wall
 			this.id = LEOStaticStrings.OBJECT_ID_WALL;
