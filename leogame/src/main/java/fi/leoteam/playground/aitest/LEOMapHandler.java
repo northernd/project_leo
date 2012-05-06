@@ -13,7 +13,7 @@ public class LEOMapHandler {
 		characterLocations = new ArrayList<LEOCharacter>();
 		characterLocations.addAll(grid.importMapFile());
 		
-		//characterLocations.get(0).calculateFOV();
+		characterLocations.get(0).calculateFOV();
 	}
 	
 	public void printDebugMap(boolean withCharacters) {

@@ -102,68 +102,88 @@ public class LEOMapGrid {
 		return rowLength;
 	}*/
 	
-	public LEOEntity getAdjacentN(int[] loc) {
-		try {
-			return mapgrid.get(loc[0]-1).get(loc[1]);
-		} catch (NullPointerException e) {
-			return null;
-		}
+	public int[] getAdjacentN(LEOEntity entity) {
+		int[] tmp = new int[2];
+		tmp[0] = entity.getXCoord()-2;
+		tmp[1] = entity.getYCoord();
+		return tmp;
 	}
 	
-	public LEOEntity getAdjacentNE(int[] loc) {
-		try {
-			return mapgrid.get(loc[0]-1).get(loc[1]+1);
-		} catch (NullPointerException e) {
-			return null;
+	public int[] getAdjacentNE(LEOEntity entity) {
+		int[] tmp = new int[2];
+		if(entity.getYCoord()%2 == 0) {
+			tmp[0] = entity.getXCoord()-1;
+			tmp[1] = entity.getYCoord()+1;
+		} else {
+			tmp[0] = entity.getXCoord()-1;
+			tmp[1] = entity.getYCoord();
+			
 		}
+		
+		return tmp;
 	}
 	
-	public LEOEntity getAdjacentE(int[] loc) {
-		try {
-			return mapgrid.get(loc[0]).get(loc[1]+1);
-		} catch (NullPointerException e) {
-			return null;
-		}
+	public int[] getAdjacentE(LEOEntity entity) {
+		int[] tmp = new int[2];
+		tmp[0] = entity.getXCoord();
+		tmp[1] = entity.getYCoord()+1;
+		return tmp;
 	}
 	
-	public LEOEntity getAdjacentSE(int[] loc) {
-		try {
-			return mapgrid.get(loc[0]+1).get(loc[1]+1);
-		} catch (NullPointerException e) {
-			return null;
+	public int[] getAdjacentSE(LEOEntity entity) {
+		int[] tmp = new int[2];
+		if(entity.getYCoord()%2 == 0) {
+			tmp[0] = entity.getXCoord()+1;
+			tmp[1] = entity.getYCoord()+1;
+		} else {
+			tmp[0] = entity.getXCoord()-1;
+			tmp[1] = entity.getYCoord();
+			
 		}
+		
+		return tmp;
 	}
 	
-	public LEOEntity getAdjacentS(int[] loc) {
-		try {
-			return mapgrid.get(loc[0]+1).get(loc[1]);
-		} catch (NullPointerException e) {
-			return null;
-		}
+	public int[] getAdjacentS(LEOEntity entity) {
+		int[] tmp = new int[2];
+		tmp[0] = entity.getXCoord()+2;
+		tmp[1] = entity.getYCoord();
+		return tmp;
 	}
 	
-	public LEOEntity getAdjacentSW(int[] loc) {
-		try {
-			return mapgrid.get(loc[0]+1).get(loc[1]-1);
-		} catch (NullPointerException e) {
-			return null;
+	public int[] getAdjacentSW(LEOEntity entity) {
+		int[] tmp = new int[2];
+		if(entity.getYCoord()%2 == 0) {
+			tmp[0] = entity.getXCoord()+1;
+			tmp[1] = entity.getYCoord()-1;
+		} else {
+			tmp[0] = entity.getXCoord()+1;
+			tmp[1] = entity.getYCoord();
+			
 		}
+		
+		return tmp;
 	}
 	
-	public LEOEntity getAdjacentW(int[] loc) {
-		try {
-			return mapgrid.get(loc[0]).get(loc[1]-1);
-		} catch (NullPointerException e) {
-			return null;
-		}
+	public int[] getAdjacentW(LEOEntity entity) {
+		int[] tmp = new int[2];
+		tmp[0] = entity.getXCoord();
+		tmp[1] = entity.getYCoord()-1;
+		return tmp;
 	}
 	
-	public LEOEntity getAdjacentNW(int[] loc) {
-		try {
-			return mapgrid.get(loc[0]-1).get(loc[1]-1);
-		} catch (NullPointerException e) {
-			return null;
+	public int[] getAdjacentNW(LEOEntity entity) {
+		int[] tmp = new int[2];
+		if(entity.getYCoord()%2 == 0) {
+			tmp[0] = entity.getXCoord()-1;
+			tmp[1] = entity.getYCoord()-1;
+		} else {
+			tmp[0] = entity.getXCoord()-1;
+			tmp[1] = entity.getYCoord();
+			
 		}
+		
+		return tmp;
 	}
 	
 	private LEOEntity addEntityToLocation(int[] loc, LEOEntity entity) {

@@ -4,7 +4,7 @@
 //Esimerkiksi: @3-3 -> jos halutaan useampi hahmo, sijainnit erotetaan pilkulla, esim. @1-2,2-1
 //Merkit X ja . ja N katsotaan kuuluvaksi karttaan (X = seinä, . = tyhjä ruutu, N = NoGo-alue). Erotetaan jokaisella rivillä jokainen ruutu pilkulla
 //Parillisten rivien tulee olla 1 yksikön pidempiä kuin parittomien
-@7-0
+@6-1
 N,N,X,N,X,.,.,.,.
 N,X,X,X,X,.,.,.
 N,X,.,X,N,X,.,.,.
