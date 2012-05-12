@@ -3,7 +3,7 @@ package fi.leoteam.leogame.rendering;
 public class Texture {
 	
     private int target; 
-    private int textureID;
+    private int textureID = 0;
     private int width;
     private int height;
     private int textureWidth;
