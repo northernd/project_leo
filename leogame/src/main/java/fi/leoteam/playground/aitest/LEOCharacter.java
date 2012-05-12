@@ -9,6 +9,7 @@ public class LEOCharacter extends LEOEntity {
 		super(location);
 		this.mapMarker = mapMarker;
 		this.map = map;
+		setFacing(LEOStaticStrings.FACING_NORTH);
 		
 	}
 
@@ -35,6 +36,10 @@ public class LEOCharacter extends LEOEntity {
 		System.out.println("SW-loc: "+map.getAdjacentSW(this)[0]+","+map.getAdjacentSW(this)[1]);
 		System.out.println("W-loc: "+map.getAdjacentW(this)[0]+","+map.getAdjacentW(this)[1]);
 		System.out.println("NW-loc: "+map.getAdjacentNW(this)[0]+","+map.getAdjacentNW(this)[1]);
+		
+		if(getFacing().equals(LEOStaticStrings.FACING_NORTH)) {
+			
+		}
 		
 	}
 	

@@ -212,4 +212,34 @@ public class LEOMapGrid {
 		
 		return result;
 	}
+	
+	public LEOEntity getEntityFromLocation(int[] loc) {
+		return mapgrid.get(loc[0]).get(loc[1]);
+	}
+	
+	private boolean isValidTile(int[] loc) {
+		boolean result = false;
+		
+		if(mapgrid.get(loc[0]) == null) {
+			return result;
+		}
+		if(mapgrid.get(loc[0]).get(loc[1]) == null) {
+			return result;
+		}
+		
+		return true;
+	}
+	
+	public void calculateFOV(boolean straight, LEOEntity character) {
+		int flag = 0;
+		if(straight) {
+			while(flag != -1) {
+				
+			}
+			if(flag == 0) {
+				int[] start, end;
+				
+			}
+		}
+	}
 }
