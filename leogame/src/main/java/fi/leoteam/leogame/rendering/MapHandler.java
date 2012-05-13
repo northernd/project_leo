@@ -9,5 +9,13 @@ public class MapHandler {
 	public MapHandler() {
 		super();
 	}
+
+	public Vector<MapFloor> getFloors() {
+		return floors;
+	}
+
+	public void setFloors(Vector<MapFloor> floors) {
+		this.floors = floors;
+	}
 	
 }
