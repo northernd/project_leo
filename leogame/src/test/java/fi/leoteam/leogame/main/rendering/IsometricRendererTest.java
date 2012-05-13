@@ -1,7 +1,5 @@
 package fi.leoteam.leogame.main.rendering;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.util.Vector;
 
@@ -13,15 +11,16 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 
-import fi.leoteam.leogame.entities.GridItem;
 import fi.leoteam.leogame.rendering.IsometricRenderer;
+import fi.leoteam.leogame.rendering.MapFloor;
+import fi.leoteam.leogame.rendering.MapHandler;
+import fi.leoteam.leogame.rendering.SingleTileBlock;
 import fi.leoteam.leogame.rendering.TextureLoader;
 
 public class IsometricRendererTest {
 	
-	Vector<Vector<GridItem>> layer = new Vector<Vector<GridItem>>();
-	Vector<Vector<GridItem>> layer2 = new Vector<Vector<GridItem>>();
 	TextureLoader loader = new TextureLoader();
+	private MapHandler handler = new MapHandler();
 	
 	@BeforeClass
 	public static void initGL() {
@@ -41,51 +40,35 @@ public class IsometricRendererTest {
 
 	@Before
 	public void setUp(){
-		String textureName = "img/testblock2.png";
-
-		for(int i = 0; i < 40; i++){
-			layer.add(new Vector<GridItem>());
-		}
-		for(Vector<GridItem> layerRow : layer){
-			for(int i = 0; i < 40; i++){
-				GridItem item = new GridItem();
-				try {
-					item.setTexture(loader.getTexture(textureName));
-					textureName = "img/testblock.png"; 
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				layerRow.add(item);
-			}
-		}
+		Vector<MapFloor> floors = new Vector<MapFloor>();
+		Vector<Vector<SingleTileBlock>> floor = new Vector<Vector<SingleTileBlock>>();
 		
 		for(int i = 0; i < 40; i++){
-			layer2.add(new Vector<GridItem>());
+			floor.add(new Vector<SingleTileBlock>());
 		}
-		for(Vector<GridItem> layerRow : layer2){
+		for(Vector<SingleTileBlock> floorRow : floor){
 			for(int i = 0; i < 40; i++){
-				GridItem item = new GridItem();
+				SingleTileBlock item;
 				try {
-					if(i < 20){
-						item.setTexture(loader.getTexture(textureName));
-					}
-					textureName = "img/testblock.png"; 
+					item = new SingleTileBlock(loader.getTexture("img/testblock.png"));
+					floorRow.add(item);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				layerRow.add(item);
 			}
 		}
+		MapFloor mapFloor = new MapFloor(0);
+		mapFloor.setFloor(floor);
+		floors.add(mapFloor);
+		
+		handler.setFloors(floors);
 	}
 	
 	@Test
 	public void drawLayerTest() {
-		Vector<Vector<Vector<GridItem>>> layers = new Vector<Vector<Vector<GridItem>>>();
-		layers.add(layer);
-		layers.add(layer2);
 		IsometricRenderer renderer = new IsometricRenderer();
 		while (!Display.isCloseRequested()) {
-			renderer.drawLayers(layers);
+			renderer.drawMap(handler);
 		}
 	}
 

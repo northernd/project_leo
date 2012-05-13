@@ -1,12 +1,26 @@
 package fi.leoteam.leogame.rendering;
 
-import java.util.Vector;
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.GL_REPEAT;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.*;
 
 import org.apache.log4j.Logger;
 import org.lwjgl.opengl.Display;
-import static org.lwjgl.opengl.GL11.*;
-
-import fi.leoteam.leogame.entities.GridItem;
 
 public class IsometricRenderer {
 	
@@ -15,27 +29,27 @@ public class IsometricRenderer {
 	private static Logger LOG = Logger.getLogger(IsometricRenderer.class);
 	float yOffSet = 0;
 	
-	public void drawLayers(Vector<Vector<Vector<GridItem>>> layers){
+	public void drawMap(MapHandler handler){
 		yOffSet = 0;
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		for(Vector<Vector<GridItem>> layer : layers){
-			drawLayer(layer);
+		for(MapFloor floor : handler.getFloors()){
+			drawFloor(floor);
 			yOffSet = -7f;
 		}
 		Display.update();
 	}
 	
-	public void drawLayer(Vector<Vector<GridItem>> layer){
+	public void drawFloor(MapFloor floor){
 		int i = 0;
 		int j = 0;
 		int k = 0;
-		int s = layer.get(0).size(); //size of a row in table
+		int s = floor.get(0).size(); //size of a row in table
 		//top to center
 		while(k < s){
 			i = k;
 			j = 0;
 			while(j <= k){
-				drawGridEntity(layer.get(i).get(j), i, j, (GRIDITEMWIDTH*s)/2);
+				drawSingleTileBlock(floor.get(i).get(j), i, j, (GRIDITEMWIDTH*s)/2);
 				i--;
 				j++;
 			}
@@ -49,7 +63,7 @@ public class IsometricRenderer {
 			i = s-1;
 			j = s-k;
 			while(j < s){
-				drawGridEntity(layer.get(i).get(j), i, j, (GRIDITEMWIDTH*s)/2);
+				drawSingleTileBlock(floor.get(i).get(j), i, j, (GRIDITEMWIDTH*s)/2);
 				i--;
 				j++;
 			}
@@ -58,8 +72,8 @@ public class IsometricRenderer {
 		
 	}
 	
-	public void drawGridEntity(GridItem entity, int i, int j, float centerX){		
-		if(entity.getTexture() == null){
+	public void drawSingleTileBlock(SingleTileBlock entity, int i, int j, float centerX){		
+		if(entity.getCurrentTexture() == null){
 			return;
 		}
 		
@@ -68,7 +82,7 @@ public class IsometricRenderer {
 		
 		glPushMatrix();
 				
-		Texture texture = entity.getTexture();
+		Texture texture = entity.getCurrentTexture();
 
 		glBindTexture(texture.getTarget(), texture.getTextureID());
 		
