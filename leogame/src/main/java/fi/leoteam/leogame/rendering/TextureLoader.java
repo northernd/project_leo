@@ -53,7 +53,7 @@ public class TextureLoader {
 	public Texture getTexture(String resourceName) throws IOException {
 		Texture texture = textures.get(resourceName);
 		if (texture != null) {
-			LOG.debug("existing texture found with key " + resourceName);
+			//LOG.debug("existing texture found with key " + resourceName);
 			return texture;
 		} else {
 			LOG.debug("texture not previously loaded, creating a new one from " + resourceName);

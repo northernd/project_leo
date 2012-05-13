@@ -3,6 +3,7 @@ package fi.leoteam.leogame.main.rendering;
 import java.io.IOException;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -21,6 +22,7 @@ public class IsometricRendererTest {
 	
 	TextureLoader loader = new TextureLoader();
 	private MapHandler handler = new MapHandler();
+	private static Logger LOG = Logger.getLogger(IsometricRenderer.class);
 	
 	@BeforeClass
 	public static void initGL() {
@@ -41,25 +43,28 @@ public class IsometricRendererTest {
 	@Before
 	public void setUp(){
 		Vector<MapFloor> floors = new Vector<MapFloor>();
-		Vector<Vector<SingleTileBlock>> floor = new Vector<Vector<SingleTileBlock>>();
-		
-		for(int i = 0; i < 40; i++){
-			floor.add(new Vector<SingleTileBlock>());
-		}
-		for(Vector<SingleTileBlock> floorRow : floor){
-			for(int i = 0; i < 40; i++){
-				SingleTileBlock item;
-				try {
-					item = new SingleTileBlock(loader.getTexture("img/testblock.png"));
-					floorRow.add(item);
-				} catch (IOException e) {
-					e.printStackTrace();
+
+		for(int k = 0; k < 4; k++){
+			Vector<Vector<SingleTileBlock>> floor = new Vector<Vector<SingleTileBlock>>();
+			for(int i = 0; i < 80; i++){
+				floor.add(new Vector<SingleTileBlock>());
+			}
+			for(Vector<SingleTileBlock> floorRow : floor){
+				for(int i = 0; i < 80; i++){
+					SingleTileBlock item;
+					try {
+						item = new SingleTileBlock(loader.getTexture("img/testblock.png"));
+						floorRow.add(item);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
+			MapFloor mapFloor = new MapFloor(k);
+			mapFloor.setFloor(floor);
+			floors.add(mapFloor);
+			LOG.debug(String.format("floor %d done..", k));
 		}
-		MapFloor mapFloor = new MapFloor(0);
-		mapFloor.setFloor(floor);
-		floors.add(mapFloor);
 		
 		handler.setFloors(floors);
 	}

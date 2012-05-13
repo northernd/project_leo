@@ -27,14 +27,11 @@ public class IsometricRenderer {
 	static final float GRIDITEMWIDTH = 10f;
 	static final float GRIDITEMHEIGHT = 7f;
 	private static Logger LOG = Logger.getLogger(IsometricRenderer.class);
-	float yOffSet = 0;
 	
 	public void drawMap(MapHandler handler){
-		yOffSet = 0;
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		for(MapFloor floor : handler.getFloors()){
 			drawFloor(floor);
-			yOffSet = -7f;
 		}
 		Display.update();
 	}
@@ -49,7 +46,7 @@ public class IsometricRenderer {
 			i = k;
 			j = 0;
 			while(j <= k){
-				drawSingleTileBlock(floor.get(i).get(j), i, j, (GRIDITEMWIDTH*s)/2);
+				drawSingleTileBlock(floor.get(i).get(j), i, j, (GRIDITEMWIDTH*s)/2, getYOffsetFromFloorIndex(floor.getFloorIndex()));
 				i--;
 				j++;
 			}
@@ -63,7 +60,7 @@ public class IsometricRenderer {
 			i = s-1;
 			j = s-k;
 			while(j < s){
-				drawSingleTileBlock(floor.get(i).get(j), i, j, (GRIDITEMWIDTH*s)/2);
+				drawSingleTileBlock(floor.get(i).get(j), i, j, (GRIDITEMWIDTH*s)/2, getYOffsetFromFloorIndex(floor.getFloorIndex()));
 				i--;
 				j++;
 			}
@@ -72,13 +69,13 @@ public class IsometricRenderer {
 		
 	}
 	
-	public void drawSingleTileBlock(SingleTileBlock entity, int i, int j, float centerX){		
+	public void drawSingleTileBlock(SingleTileBlock entity, int i, int j, float centerX, float yOffset){		
 		if(entity.getCurrentTexture() == null){
 			return;
 		}
 		
 		float xCoord = centerX + (GRIDITEMWIDTH/2) * getXFromGridLocation(i, j);
-		float yCoord = yOffSet + (GRIDITEMHEIGHT/2) * getYFromGridLocation(i, j);
+		float yCoord = yOffset + (GRIDITEMHEIGHT/2) * getYFromGridLocation(i, j);
 		
 		glPushMatrix();
 				
@@ -109,7 +106,7 @@ public class IsometricRenderer {
 		
 		glPopMatrix();
 
-		LOG.debug(String.format("drawing item (%d,%d) to (%f,%f)", i, j, xCoord, yCoord));
+		//LOG.debug(String.format("drawing item (%d,%d) to (%f,%f)", i, j, xCoord, yCoord));
 	}
 	
 	
@@ -119,6 +116,10 @@ public class IsometricRenderer {
 	
 	protected int getXFromGridLocation(int i, int j){
 		return j - i;
+	}
+	
+	protected float getYOffsetFromFloorIndex(int i){
+		return -i*GRIDITEMHEIGHT;
 	}
 
 }
