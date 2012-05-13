@@ -44,7 +44,7 @@ public class IsometricRendererTest {
 	public void setUp(){
 		Vector<MapFloor> floors = new Vector<MapFloor>();
 
-		for(int k = 0; k < 4; k++){
+		for(int k = 0; k < 20; k++){
 			Vector<Vector<SingleTileBlock>> floor = new Vector<Vector<SingleTileBlock>>();
 			for(int i = 0; i < 80; i++){
 				floor.add(new Vector<SingleTileBlock>());
