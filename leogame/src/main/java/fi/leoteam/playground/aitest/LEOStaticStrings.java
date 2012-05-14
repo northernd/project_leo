@@ -20,6 +20,9 @@ public class LEOStaticStrings {
 	protected static int OBJECT_ID_WALL = 1;
 	protected static int OBJECT_ID_EMPTY = 0;
 	protected static int OBJECT_ID_NOGO = 2;
+	
+	protected static int SQUARE_SIDE_LENGTH = 11;
+	protected static int SQUARE_SIDE_HALF_WITHOUT_CENTER = (LEOStaticStrings.SQUARE_SIDE_LENGTH-1)/2;
 
 
 }

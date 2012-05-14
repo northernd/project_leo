@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class LEOMapGrid {
 	
 	private ArrayList<ArrayList<LEOEntity>> mapgrid = new ArrayList<ArrayList<LEOEntity>>();
+	private int tileSideLength = 11;
 	//private int rowLength;
 
 	public LEOMapGrid() {
@@ -74,9 +75,9 @@ public class LEOMapGrid {
 		StringBuilder map = new StringBuilder("");
 		for(int i = 0; i < mapgrid.size(); i++) {
 			ArrayList<LEOEntity> tmp = mapgrid.get(i);
-			if(i%2 != 0) {
+			/*if(i%2 != 0) {
 				map.append(" ");
-			}
+			}*/
 			for(int j = 0; j < tmp.size(); j++) {
 				map.append(tmp.get(j).toString());
 				
@@ -104,21 +105,15 @@ public class LEOMapGrid {
 	
 	public int[] getAdjacentN(LEOEntity entity) {
 		int[] tmp = new int[2];
-		tmp[0] = entity.getXCoord()-2;
+		tmp[0] = entity.getXCoord()-1;
 		tmp[1] = entity.getYCoord();
 		return tmp;
 	}
 	
 	public int[] getAdjacentNE(LEOEntity entity) {
 		int[] tmp = new int[2];
-		if(entity.getYCoord()%2 == 0) {
 			tmp[0] = entity.getXCoord()-1;
 			tmp[1] = entity.getYCoord()+1;
-		} else {
-			tmp[0] = entity.getXCoord()-1;
-			tmp[1] = entity.getYCoord();
-			
-		}
 		
 		return tmp;
 	}
@@ -132,35 +127,25 @@ public class LEOMapGrid {
 	
 	public int[] getAdjacentSE(LEOEntity entity) {
 		int[] tmp = new int[2];
-		if(entity.getYCoord()%2 == 0) {
 			tmp[0] = entity.getXCoord()+1;
 			tmp[1] = entity.getYCoord()+1;
-		} else {
-			tmp[0] = entity.getXCoord()-1;
-			tmp[1] = entity.getYCoord();
-			
-		}
+
 		
 		return tmp;
 	}
 	
 	public int[] getAdjacentS(LEOEntity entity) {
 		int[] tmp = new int[2];
-		tmp[0] = entity.getXCoord()+2;
+		tmp[0] = entity.getXCoord()+1;
 		tmp[1] = entity.getYCoord();
 		return tmp;
 	}
 	
 	public int[] getAdjacentSW(LEOEntity entity) {
 		int[] tmp = new int[2];
-		if(entity.getYCoord()%2 == 0) {
 			tmp[0] = entity.getXCoord()+1;
 			tmp[1] = entity.getYCoord()-1;
-		} else {
-			tmp[0] = entity.getXCoord()+1;
-			tmp[1] = entity.getYCoord();
-			
-		}
+
 		
 		return tmp;
 	}
@@ -174,14 +159,9 @@ public class LEOMapGrid {
 	
 	public int[] getAdjacentNW(LEOEntity entity) {
 		int[] tmp = new int[2];
-		if(entity.getYCoord()%2 == 0) {
 			tmp[0] = entity.getXCoord()-1;
 			tmp[1] = entity.getYCoord()-1;
-		} else {
-			tmp[0] = entity.getXCoord()-1;
-			tmp[1] = entity.getYCoord();
-			
-		}
+
 		
 		return tmp;
 	}
@@ -230,16 +210,38 @@ public class LEOMapGrid {
 		return true;
 	}
 	
-	public void calculateFOV(boolean straight, LEOEntity character) {
-		int flag = 0;
-		if(straight) {
-			while(flag != -1) {
-				
+	public void calculateFOV(int[] point, LEOEntity character) {
+		Square point1 = new Square(character.getLocation());
+		
+		Square point2 = new Square(2,1);
+		ArrayList<Square>possibleSquares = Square.getPossibleSquares(point1, point2);
+		calculateIntersection(possibleSquares, point1, point2);
+	}
+	
+	public float[] calculateIntersection(ArrayList<Square> possibleSquares, Square point1, Square point2) {
+		float[] result = new float[2];
+		ArrayList<Square> onLine = new ArrayList<Square>();
+		for(int i = 0; i < possibleSquares.size(); i++) {
+			Square tmp = possibleSquares.get(i);
+			if(!tmp.equals(point1) && !tmp.equals(point2)) {
+				if(tmp.isSquareOnLine(point1, point2)) {
+					onLine.add(tmp);
+				}
 			}
-			if(flag == 0) {
-				int[] start, end;
-				
-			}
+			
 		}
+		
+		System.out.println("**** Following squares are on the line ****");
+		for(int i = 0; i < onLine.size(); i++) {
+			System.out.println(onLine.get(i).toString());
+		}
+		System.out.println("********");
+		//float tmp = (float)((float)(point2[1]-point1[1])/(float)(point2[0]-point1[0])*(x-point1[0])+point1[1]);
+		//System.out.println(tmp);
+		/*if(tmp != x) {
+			return null;
+		}*/
+
+		return result;
 	}
 }
