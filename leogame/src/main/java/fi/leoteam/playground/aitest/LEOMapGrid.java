@@ -213,13 +213,13 @@ public class LEOMapGrid {
 	public void calculateFOV(int[] point, LEOEntity character) {
 		Square point1 = new Square(character.getLocation());
 		
-		Square point2 = new Square(2,1);
+		Square point2 = new Square(9,9);
 		ArrayList<Square>possibleSquares = Square.getPossibleSquares(point1, point2);
 		calculateIntersection(possibleSquares, point1, point2);
 	}
 	
-	public float[] calculateIntersection(ArrayList<Square> possibleSquares, Square point1, Square point2) {
-		float[] result = new float[2];
+	public ArrayList<Square> calculateIntersection(ArrayList<Square> possibleSquares, Square point1, Square point2) {
+		long startTime = System.currentTimeMillis();
 		ArrayList<Square> onLine = new ArrayList<Square>();
 		for(int i = 0; i < possibleSquares.size(); i++) {
 			Square tmp = possibleSquares.get(i);
@@ -230,18 +230,14 @@ public class LEOMapGrid {
 			}
 			
 		}
-		
+		long endTime = System.currentTimeMillis() - startTime;
+		System.out.println("Kulunut aika: "+endTime);
 		System.out.println("**** Following squares are on the line ****");
 		for(int i = 0; i < onLine.size(); i++) {
 			System.out.println(onLine.get(i).toString());
 		}
 		System.out.println("********");
-		//float tmp = (float)((float)(point2[1]-point1[1])/(float)(point2[0]-point1[0])*(x-point1[0])+point1[1]);
-		//System.out.println(tmp);
-		/*if(tmp != x) {
-			return null;
-		}*/
 
-		return result;
+		return onLine;
 	}
 }

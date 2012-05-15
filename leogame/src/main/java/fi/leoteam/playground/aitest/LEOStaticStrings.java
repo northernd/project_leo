@@ -23,6 +23,7 @@ public class LEOStaticStrings {
 	
 	protected static int SQUARE_SIDE_LENGTH = 11;
 	protected static int SQUARE_SIDE_HALF_WITHOUT_CENTER = (LEOStaticStrings.SQUARE_SIDE_LENGTH-1)/2;
+	protected static int SQUARE_SIDE_HALF_WITH_CENTER = ((LEOStaticStrings.SQUARE_SIDE_LENGTH-1)/2)+1;
 
 
 }
