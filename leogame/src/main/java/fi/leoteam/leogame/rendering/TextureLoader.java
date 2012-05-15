@@ -53,7 +53,7 @@ public class TextureLoader {
 	public Texture getTexture(String resourceName) throws IOException {
 		Texture texture = textures.get(resourceName);
 		if (texture != null) {
-			//LOG.debug("existing texture found with key " + resourceName);
+			// LOG.debug("existing texture found with key " + resourceName);
 			return texture;
 		} else {
 			LOG.debug("texture not previously loaded, creating a new one from " + resourceName);
@@ -74,8 +74,10 @@ public class TextureLoader {
 		int textureID = createTextureID();
 		Texture texture = new Texture(target, textureID);
 		glBindTexture(target, textureID);
-		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
 
 		BufferedImage bufferedImage = loadImage(resourceName);
 		texture.setWidth(bufferedImage.getWidth());
@@ -127,9 +129,9 @@ public class TextureLoader {
 		}
 
 		Graphics g = texImage.getGraphics();
-		g.setColor(new Color(0f, 0f, 0f, 0f));
+		g.setColor(new Color(0, 0, 0, 0));
 		g.fillRect(0, 0, texWidth, texHeight);
-		g.drawImage(bufferedImage, 0, 0, null);
+		g.drawImage(bufferedImage, 0, 0, texWidth, texHeight, null);
 
 		byte[] data = ((DataBufferByte) texImage.getRaster().getDataBuffer()).getData();
 

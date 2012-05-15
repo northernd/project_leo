@@ -5,6 +5,10 @@ import java.util.Vector;
 import fi.leoteam.leogame.entities.Entity;
 
 public class SingleTileBlock implements Textured{
+	
+	public static final float GRIDITEMX = 18f;
+	public static final float GRIDITEMY = 20f;
+	
 	private Texture tile;
 	private Vector<Entity> innerObjects;
 	
