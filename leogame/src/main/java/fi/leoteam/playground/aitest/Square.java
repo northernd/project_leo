@@ -26,9 +26,11 @@ public class Square {
 	}
 	
 	private void calculateCorners() {
+		int x = (getX() == 0)? 1 : 0;
+		int y = (getY() == 0)? 1 : 0;
 		ne_corner = new int[2];
 		ne_corner[0] = pixel_x+LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER;
-		ne_corner[1] = -pixel_y+LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER+1;
+		ne_corner[1] = -pixel_y+LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER+y;
 		System.out.println("NE-corner: ("+ne_corner[0]+","+ne_corner[1]+")");
 		
 		se_corner = new int[2];
@@ -36,14 +38,15 @@ public class Square {
 		se_corner[1] = -pixel_y-LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER;
 		System.out.println("SE-corner: ("+se_corner[0]+","+se_corner[1]+")");
 		
+		
 		sw_corner = new int[2];
-		sw_corner[0] = pixel_x-LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER-1;
+		sw_corner[0] = pixel_x-LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER-x;
 		sw_corner[1] = -pixel_y-LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER;
 		System.out.println("SW-corner: ("+sw_corner[0]+","+sw_corner[1]+")");
 		
 		nw_corner = new int[2];
-		nw_corner[0] = pixel_x-LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER-1;
-		nw_corner[1] = -pixel_y+LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER+1;
+		nw_corner[0] = pixel_x-LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER-x;
+		nw_corner[1] = -pixel_y+LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER+y;
 		System.out.println("NW-corner: ("+nw_corner[0]+","+nw_corner[1]+")");
 	}
 	
@@ -63,18 +66,11 @@ public class Square {
 		return pixel_x;
 	}
 	
-	private int[] convertToPixelLocation(int[] location) {
-		int x = convertOnePointToPixelLocation(location[0]);
-		int y = convertOnePointToPixelLocation(location[1]);
-		System.out.println("x: "+x+" y: "+y);
-		int[] result = {x, y};
-		return result;
-		
-	}
-	
 	private int convertOnePointToPixelLocation(int point) {
-		int half = (LEOStaticStrings.SQUARE_SIDE_LENGTH-1)/2;
-		return (point*LEOStaticStrings.SQUARE_SIDE_LENGTH)+(half+1);
+		//int half = ((LEOStaticStrings.SQUARE_SIDE_LENGTH-1)/2)+1;
+		//return (point*LEOStaticStrings.SQUARE_SIDE_LENGTH)+(half+1);
+		int half = (LEOStaticStrings.SQUARE_SIDE_LENGTH-3)/2;
+		return ((half*(1+(point*2)))+(1*(2+(point*2))));
 	}
 	
 	protected static ArrayList<Square> getPossibleSquares(Square point1, Square point2) {
@@ -92,15 +88,6 @@ public class Square {
 			startPoint[0] = point2.getX();
 			x = point1.getX();
 		}
-		
-		/*if(point1.getReal_y() <= point2.getReal_y()) {
-			startPoint[1] = point1.getReal_y();
-			y = point2.getReal_y();
-		}
-		else {
-			startPoint[1] = point2.getReal_y();
-			y = point1.getReal_y();
-		}*/
 		
 		if(point1.getY() <= point2.getY()) {
 			startPoint[1] = point1.getY();
@@ -181,8 +168,10 @@ public class Square {
 	
 	@Override
 	public String toString() {
-		
-		return "Center: ("+getX()+","+getY()+") - Pixel Location: ("+getPixel_x()+","+getPixel_y()+") - Real Y:"+getReal_y();
+		String result = "Center: ("+getX()+","+getY()+") - Pixel Location: ("+getPixel_x()+","+getPixel_y()+") - Real Y:"+getReal_y();
+		result += "\n REAL CORNERS: NE ("+ne_corner[0]+","+ne_corner[1]+"), SE ("+se_corner[0]+","+se_corner[1]+"), SW ("+sw_corner[0]+","
+				+sw_corner[1]+"), NW ("+nw_corner[0]+","+nw_corner[1]+")";
+		return result;
 	}
 	
 	@Override
@@ -195,6 +184,38 @@ public class Square {
 			return false;
 		}
 		return true;
+	}
+	
+	private Square getAdjacentN() {
+		return new Square(getX(), getY()-1);
+	}
+	
+	private Square getAdjacentNE() {
+		return new Square(getX()+1, getY()-1);
+	}
+	
+	private Square getAdjacentE() {
+		return new Square(getX()+1, getY());
+	}
+	
+	private Square getAdjacentSE() {
+		return new Square(getX()+1, getY()+1);
+	}
+	
+	private Square getAdjacentS() {
+		return new Square(getX(), getY()+1);
+	}
+	
+	private Square getAdjacentSW() {
+		return new Square(getX()-1, getY()+1);
+	}
+	
+	private Square getAdjacentW() {
+		return new Square(getX()-1, getY());
+	}
+	
+	private Square getAdjacentNW() {
+		return new Square(getX()-1, getY()-1);
 	}
 	
 }
