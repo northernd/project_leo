@@ -34,11 +34,11 @@ public class QuadDemo {
 
 			// draw quad
 			GL11.glBegin(GL11.GL_QUADS);
-			GL11.glVertex2f(50, 50);
-			GL11.glVertex2f(60, 55);
-			GL11.glVertex2f(70, 50);
-			GL11.glVertex2f(60, 45);
-			GL11.glEnd();
+		    GL11.glVertex2f(100,100);
+		    GL11.glVertex2f(100+200,100);
+		    GL11.glVertex2f(100+200,100+200);
+		    GL11.glVertex2f(100,100+200);
+		    GL11.glEnd();
 			
 			//drawQuadReformed(50, 50, 50);
 			Display.update();

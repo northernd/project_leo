@@ -20,23 +20,26 @@ import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.*;
 
 import org.apache.log4j.Logger;
+import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.util.Color;
 
 public class IsometricRenderer {
 	
-	static final float GRIDITEMWIDTH = 10f;
-	static final float GRIDITEMHEIGHT = 7f;
 	private static Logger LOG = Logger.getLogger(IsometricRenderer.class);
+	
+	private Camera camera = new Camera();
 	
 	public void drawMap(MapHandler handler){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		int index = 0;
 		for(MapFloor floor : handler.getFloors()){
-			drawFloor(floor);
+			drawFloor(floor, index++);
 		}
 		Display.update();
 	}
 	
-	public void drawFloor(MapFloor floor){
+	public void drawFloor(MapFloor floor, int floorIndex){
 		int i = 0;
 		int j = 0;
 		int k = 0;
@@ -46,27 +49,24 @@ public class IsometricRenderer {
 			i = k;
 			j = 0;
 			while(j <= k){
-				drawSingleTileBlock(floor.get(i).get(j), i, j, (GRIDITEMWIDTH*s)/2, getYOffsetFromFloorIndex(floor.getFloorIndex()));
+				drawSingleTileBlock(floor.get(i).get(j), i, j, (SingleTileBlock.GRIDITEMX*s)/2, getYOffsetFromFloorIndex(floorIndex));
 				i--;
 				j++;
 			}
 			k++;
 		}
-		
-		k--;
-		
+		k--;	
 		//center to bottom
 		while(i+1 != j-1){
 			i = s-1;
 			j = s-k;
 			while(j < s){
-				drawSingleTileBlock(floor.get(i).get(j), i, j, (GRIDITEMWIDTH*s)/2, getYOffsetFromFloorIndex(floor.getFloorIndex()));
+				drawSingleTileBlock(floor.get(i).get(j), i, j, (SingleTileBlock.GRIDITEMX*s)/2, getYOffsetFromFloorIndex(floorIndex));
 				i--;
 				j++;
 			}
 			k--;
 		}
-		
 	}
 	
 	public void drawSingleTileBlock(SingleTileBlock entity, int i, int j, float centerX, float yOffset){		
@@ -74,17 +74,17 @@ public class IsometricRenderer {
 			return;
 		}
 		
-		float xCoord = centerX + (GRIDITEMWIDTH/2) * getXFromGridLocation(i, j);
-		float yCoord = yOffset + (GRIDITEMHEIGHT/2) * getYFromGridLocation(i, j);
-		
+		float xCoord = centerX + (SingleTileBlock.GRIDITEMX/2) * getXFromGridLocation(i, j);
+		float yCoord = yOffset + (SingleTileBlock.GRIDITEMY/4) * getYFromGridLocation(i, j);
+				
 		glPushMatrix();
 				
 		Texture texture = entity.getCurrentTexture();
 
 		glBindTexture(texture.getTarget(), texture.getTextureID());
 		
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T, GL_REPEAT);
+		float height = SingleTileBlock.GRIDITEMY;
+		float width = SingleTileBlock.GRIDITEMX;
 		
     	glEnable(GL_BLEND);
     	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);	
@@ -93,14 +93,14 @@ public class IsometricRenderer {
 
     	glBegin(GL_QUADS); 
     		
-    		glTexCoord2f(0,0);
-    		glVertex2f(0,0);
-    		glTexCoord2f(1,0);
-    		glVertex2f(18,0);
-    		glTexCoord2f(1,1);
-    		glVertex2f(18,20);
-    		glTexCoord2f(0,1);
-    		glVertex2f(0,20);
+	      glTexCoord2f(0, 0);
+	      glVertex2f(0, 0);
+	      glTexCoord2f(0, 1);
+	      glVertex2f(0, height);
+	      glTexCoord2f(1, 1);
+	      glVertex2f(width,height);
+	      glTexCoord2f(1, 0);
+	      glVertex2f(width,0);
 
     	glEnd();
 		
@@ -108,7 +108,6 @@ public class IsometricRenderer {
 
 		//LOG.debug(String.format("drawing item (%d,%d) to (%f,%f)", i, j, xCoord, yCoord));
 	}
-	
 	
 	protected int getYFromGridLocation(int i, int j){
 		return i + j;
@@ -119,7 +118,15 @@ public class IsometricRenderer {
 	}
 	
 	protected float getYOffsetFromFloorIndex(int i){
-		return -i*GRIDITEMHEIGHT;
+		return -i*(SingleTileBlock.GRIDITEMY/2);
 	}
 
+	public Camera getCamera() {
+		return camera;
+	}
+
+	public void setCamera(Camera camera) {
+		this.camera = camera;
+	}
+	
 }
