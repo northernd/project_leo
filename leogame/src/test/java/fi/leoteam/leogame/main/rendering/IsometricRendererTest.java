@@ -16,6 +16,8 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 
+import fi.leoteam.leogame.entities.Entity;
+import fi.leoteam.leogame.entities.StaticEntity;
 import fi.leoteam.leogame.model.MapFloor;
 import fi.leoteam.leogame.model.MapHandler;
 import fi.leoteam.leogame.model.SingleTileBlock;
@@ -57,7 +59,10 @@ public class IsometricRendererTest {
 				for(int i = 0; i < 50; i++){
 					SingleTileBlock item;
 					try {
-						item = new SingleTileBlock(loader.getTexture("img/testblock.png"));
+						item = new SingleTileBlock(loader.getTexture("img/testtile.png"));
+						if(Math.random() > 0.8){
+							item.addInnerObject(new StaticEntity(0, 0, loader.getTexture("img/testblock.png")));
+						}
 						floorRow.add(item);
 					} catch (IOException e) {
 						e.printStackTrace();

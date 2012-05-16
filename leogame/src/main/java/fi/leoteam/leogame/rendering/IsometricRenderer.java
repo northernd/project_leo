@@ -21,6 +21,7 @@ import static org.lwjgl.opengl.GL11.glVertex2f;
 import org.apache.log4j.Logger;
 import org.lwjgl.opengl.Display;
 
+import fi.leoteam.leogame.entities.Entity;
 import fi.leoteam.leogame.model.MapFloor;
 import fi.leoteam.leogame.model.MapHandler;
 import fi.leoteam.leogame.model.SingleTileBlock;
@@ -70,22 +71,24 @@ public class IsometricRenderer {
 		}
 	}
 	
-	public void drawSingleTileBlock(SingleTileBlock entity, int i, int j, float centerX, float yOffset){		
-		if(entity.getCurrentTexture() == null){
+	public void drawSingleTileBlock(SingleTileBlock tileblock, int i, int j, float centerX, float yOffset){		
+		if(tileblock.getCurrentTexture() == null){
 			return;
 		}
-		
 		float xCoord = centerX + (SingleTileBlock.GRIDITEMX/2) * getXFromGridLocation(i, j);
 		float yCoord = yOffset + (SingleTileBlock.GRIDITEMY/4) * getYFromGridLocation(i, j);
-				
+		float width = SingleTileBlock.GRIDITEMX;
+		float height = SingleTileBlock.GRIDITEMY;
+		drawQuad(tileblock.getCurrentTexture(), xCoord, yCoord, width, height);
+		for(Entity e : tileblock.getInnerObjects()){
+			drawQuad(e.getCurrentTexture(), xCoord, yCoord, width, height);
+		}
+	}
+	
+	private void drawQuad(Texture texture, float xCoord, float yCoord, float width, float height){
 		glPushMatrix();
-				
-		Texture texture = entity.getCurrentTexture();
 
 		glBindTexture(texture.getTarget(), texture.getTextureID());
-		
-		float height = SingleTileBlock.GRIDITEMY;
-		float width = SingleTileBlock.GRIDITEMX;
 		
     	glEnable(GL_BLEND);
     	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);	
@@ -106,8 +109,6 @@ public class IsometricRenderer {
     	glEnd();
 		
 		glPopMatrix();
-
-		//LOG.debug(String.format("drawing item (%d,%d) to (%f,%f)", i, j, xCoord, yCoord));
 	}
 	
 	protected int getYFromGridLocation(int i, int j){

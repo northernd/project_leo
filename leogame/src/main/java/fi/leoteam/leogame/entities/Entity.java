@@ -1,18 +1,27 @@
 package fi.leoteam.leogame.entities;
 
 import fi.leoteam.leogame.misc.Location;
+import fi.leoteam.leogame.rendering.Texture;
+import fi.leoteam.leogame.rendering.Textured;
 
-public abstract class Entity {
+public abstract class Entity implements Textured{
 
 	private boolean passable = false;
 	private String facing = null;
 	private boolean blockFOV = false;
 	private Location location = null;
 	private int height = 0;
+	private Texture texture;
 	
 	public Entity(Location location) {
 		super();
 		setLocation(location);
+	}
+	
+	public Entity(int i, int j, Texture texture) {
+		super();
+		this.texture = texture;
+		setLocation(new Location(i, j));
 	}
 	
 	public boolean isPassable() {
@@ -63,5 +72,9 @@ public abstract class Entity {
 
 	public void setHeight(int height) {
 		this.height = height;
+	}
+	
+	public Texture getCurrentTexture() {
+		return texture;
 	}
 }

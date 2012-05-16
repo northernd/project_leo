@@ -41,6 +41,10 @@ public class SingleTileBlock implements Textured{
 	public void setInnerObjects(Vector<Entity> innerObjects) {
 		this.innerObjects = innerObjects;
 	}
+	
+	public void addInnerObject(Entity innerObject){
+		this.innerObjects.add(innerObject);
+	}
 
 	public Texture getCurrentTexture() {
 		return tile;
