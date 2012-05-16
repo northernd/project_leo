@@ -51,13 +51,16 @@ public class LEOMapGrid {
 	
 						ArrayList<LEOEntity> tmp = new ArrayList<LEOEntity>(rowLength);
 						for(int i = 0; i < rowLength; i++) {
-							tmp.add(LEOEntity.encodeMapMarkings(row[i],mapgrid.size()+"-"+i));
+							//System.out.println(i+","+mapgrid.size());
+							tmp.add(LEOEntity.encodeMapMarkings(row[i],i+"-"+mapgrid.size()));
 						}
 						
 						mapgrid.add(tmp);
 					}
 				}
 			}
+			
+			mapgrid = MapGenerator.generateMap(50);
 			
 		} catch (FileNotFoundException e) {
 			LEOAITest.log.error("Virhe", e);
@@ -197,6 +200,17 @@ public class LEOMapGrid {
 		return mapgrid.get(loc[0]).get(loc[1]);
 	}
 	
+	public LEOEntity getEntityFromLocation(Square s) {
+		LEOEntity result;
+		try {
+			result = mapgrid.get(s.getY()).get(s.getX());
+		} catch (NullPointerException e) {
+			result = null;
+		}
+		
+		return result;
+	}
+	
 	private boolean isValidTile(int[] loc) {
 		boolean result = false;
 		
@@ -213,9 +227,54 @@ public class LEOMapGrid {
 	public void calculateFOV(int[] point, LEOEntity character) {
 		Square point1 = new Square(character.getLocation());
 		
-		Square point2 = new Square(9,9);
-		ArrayList<Square>possibleSquares = Square.getPossibleSquares(point1, point2);
-		calculateIntersection(possibleSquares, point1, point2);
+		//Square point2 = new Square(299,299);
+		long startTime = System.currentTimeMillis();
+		//ArrayList<Square>possibleSquares = Square.getPossibleSquares(point1, point2);
+		//calculateIntersection(possibleSquares, point1, point2);
+		for(int i = 0; i < 50; i++) {
+			for(int j = 0; j < 50; j++) {
+				Square tmp = new Square(i, j);
+				if(!tmp.equals(point1)) {
+					calculateFOVToSinglePoint(point1, tmp);
+				}
+			}
+		}
+		
+		long endTime = System.currentTimeMillis() - startTime;
+		System.out.println("Kulunut aika: "+endTime);
+	}
+	
+	private boolean calculateFOVToSinglePoint(Square startPoint, Square targetPoint) {
+		boolean resultFlag = false;
+		int sector = Square.getPossibleSector(startPoint, targetPoint);
+		ArrayList<Square> nextOnes = startPoint.getPossibleNextSquares(sector);
+		Square current = startPoint;
+		boolean outerFlag = true;
+		
+		while(outerFlag && !resultFlag) {
+			
+			if(nextOnes.contains(targetPoint)) {
+				outerFlag = false;
+			}
+			else {
+				for(int i = 0; i < nextOnes.size(); i++) {
+					Square tmp = nextOnes.get(i);
+					if(tmp.isSquareOnLine(startPoint, targetPoint)) {
+						resultFlag = getEntityFromLocation(tmp).isBlockFOV();
+						current = tmp;
+						System.out.println("****** Ruutu "+tmp.getLocationAsSimpleString()+" blockkaa näkymän "+resultFlag);
+					}
+				}
+			}
+			
+			nextOnes = current.getPossibleNextSquares(sector);
+			
+		}
+		
+		resultFlag = !resultFlag;
+		System.out.println("Näköyhteys pisteiden välillä on: "+resultFlag);
+		
+		return resultFlag;
 	}
 	
 	public ArrayList<Square> calculateIntersection(ArrayList<Square> possibleSquares, Square point1, Square point2) {
