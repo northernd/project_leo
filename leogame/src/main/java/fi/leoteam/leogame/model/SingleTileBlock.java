@@ -1,8 +1,10 @@
-package fi.leoteam.leogame.rendering;
+package fi.leoteam.leogame.model;
 
 import java.util.Vector;
 
 import fi.leoteam.leogame.entities.Entity;
+import fi.leoteam.leogame.rendering.Texture;
+import fi.leoteam.leogame.rendering.Textured;
 
 public class SingleTileBlock implements Textured{
 	

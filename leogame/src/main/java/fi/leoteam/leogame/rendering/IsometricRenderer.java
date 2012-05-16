@@ -21,6 +21,10 @@ import static org.lwjgl.opengl.GL11.glVertex2f;
 import org.apache.log4j.Logger;
 import org.lwjgl.opengl.Display;
 
+import fi.leoteam.leogame.model.MapFloor;
+import fi.leoteam.leogame.model.MapHandler;
+import fi.leoteam.leogame.model.SingleTileBlock;
+
 public class IsometricRenderer {
 	
 	private static Logger LOG = Logger.getLogger(IsometricRenderer.class);

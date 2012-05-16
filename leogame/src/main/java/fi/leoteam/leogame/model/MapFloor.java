@@ -1,6 +1,7 @@
-package fi.leoteam.leogame.rendering;
+package fi.leoteam.leogame.model;
 
 import java.util.Vector;
+
 
 public class MapFloor {
 

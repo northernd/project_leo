@@ -16,10 +16,10 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 
+import fi.leoteam.leogame.model.MapFloor;
+import fi.leoteam.leogame.model.MapHandler;
+import fi.leoteam.leogame.model.SingleTileBlock;
 import fi.leoteam.leogame.rendering.IsometricRenderer;
-import fi.leoteam.leogame.rendering.MapFloor;
-import fi.leoteam.leogame.rendering.MapHandler;
-import fi.leoteam.leogame.rendering.SingleTileBlock;
 import fi.leoteam.leogame.rendering.TextureLoader;
 
 public class IsometricRendererTest {
