@@ -1,4 +1,4 @@
-package misc;
+package fi.leoteam.leogame.misc;
 
 public class Location {
 

@@ -1,6 +1,6 @@
 package fi.leoteam.leogame.entities;
 
-import misc.Location;
+import fi.leoteam.leogame.misc.Location;
 
 public abstract class Entity {
 
