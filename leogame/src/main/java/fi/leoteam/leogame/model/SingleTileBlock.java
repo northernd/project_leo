@@ -11,7 +11,7 @@ public class SingleTileBlock implements Textured{
 	public static final float GRIDITEMX = 18f;
 	public static final float GRIDITEMY = 20f;
 	
-	private Texture tile;
+	private Texture tile = null;
 	private Vector<Entity> innerObjects;
 	
 	public SingleTileBlock(Texture tile, Vector<Entity> innerObjects) {

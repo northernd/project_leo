@@ -71,15 +71,15 @@ public class IsometricRenderer {
 		}
 	}
 	
-	public void drawSingleTileBlock(SingleTileBlock tileblock, int i, int j, float centerX, float yOffset){		
-		if(tileblock.getCurrentTexture() == null){
-			return;
-		}
+	public void drawSingleTileBlock(SingleTileBlock tileblock, int i, int j, float centerX, float yOffset){
+		
 		float xCoord = centerX + (SingleTileBlock.GRIDITEMX/2) * getXFromGridLocation(i, j);
 		float yCoord = yOffset + (SingleTileBlock.GRIDITEMY/4) * getYFromGridLocation(i, j);
 		float width = SingleTileBlock.GRIDITEMX;
 		float height = SingleTileBlock.GRIDITEMY;
-		drawQuad(tileblock.getCurrentTexture(), xCoord, yCoord, width, height);
+		if(tileblock.getCurrentTexture() != null){
+			drawQuad(tileblock.getCurrentTexture(), xCoord, yCoord, width, height);
+		}
 		for(Entity e : tileblock.getInnerObjects()){
 			drawQuad(e.getCurrentTexture(), xCoord, yCoord, width, height);
 		}

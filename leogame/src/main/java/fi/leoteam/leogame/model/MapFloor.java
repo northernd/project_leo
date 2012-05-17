@@ -15,6 +15,10 @@ public class MapFloor {
 	public Vector<SingleTileBlock> get(int i){
 		return floor.get(i);
 	}
+	
+	public void add(Vector<SingleTileBlock> e){
+		floor.add(e);
+	}
 
 	public Vector<Vector<SingleTileBlock>> getFloor() {
 		return floor;

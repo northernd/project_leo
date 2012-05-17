@@ -16,11 +16,11 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 
-import fi.leoteam.leogame.entities.Entity;
-import fi.leoteam.leogame.entities.StaticEntity;
 import fi.leoteam.leogame.model.MapFloor;
 import fi.leoteam.leogame.model.MapHandler;
 import fi.leoteam.leogame.model.SingleTileBlock;
+import fi.leoteam.leogame.model.generator.MapGenerator;
+import fi.leoteam.leogame.model.generator.RandomSeed;
 import fi.leoteam.leogame.rendering.IsometricRenderer;
 import fi.leoteam.leogame.rendering.TextureLoader;
 
@@ -47,35 +47,9 @@ public class IsometricRendererTest {
 	}
 
 	@Before
-	public void setUp(){
-		Vector<MapFloor> floors = new Vector<MapFloor>();
-
-		for(int k = 0; k < 1; k++){
-			Vector<Vector<SingleTileBlock>> floor = new Vector<Vector<SingleTileBlock>>();
-			for(int i = 0; i < 50; i++){
-				floor.add(new Vector<SingleTileBlock>());
-			}
-			for(Vector<SingleTileBlock> floorRow : floor){
-				for(int i = 0; i < 50; i++){
-					SingleTileBlock item;
-					try {
-						item = new SingleTileBlock(loader.getTexture("img/testtile.png"));
-						if(Math.random() > 0.8){
-							item.addInnerObject(new StaticEntity(0, 0, loader.getTexture("img/testblock.png")));
-						}
-						floorRow.add(item);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			MapFloor mapFloor = new MapFloor();
-			mapFloor.setFloor(floor);
-			floors.add(mapFloor);
-			LOG.debug(String.format("floor %d done..", k));
-		}
-		
-		handler.setFloors(floors);
+	public void setUp() throws IOException{
+		MapGenerator generator = new MapGenerator();
+		handler = generator.generateMap(50, new RandomSeed(42));
 	}
 	
 	@Test

@@ -1,7 +1,6 @@
 package fi.leoteam.leogame.entities;
 
 import fi.leoteam.leogame.rendering.Texture;
-import fi.leoteam.leogame.rendering.Textured;
 
 public class StaticEntity extends Entity{
 
