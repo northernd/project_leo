@@ -19,12 +19,12 @@ public class LEOMapHandler {
 	public void printDebugMap(boolean withCharacters) {
 		String map;
 		if(withCharacters) {
-			map = grid.getMapWithCharacters(characterLocations);
+			//map = grid.getMapWithCharacters(characterLocations);
 		} else {
-			map = grid.getMapAsString().toString();
+			//map = grid.getMapAsString().toString();
 		}
 		
-		System.out.println(map);
+		//System.out.println(map);
 	}
 	
 	

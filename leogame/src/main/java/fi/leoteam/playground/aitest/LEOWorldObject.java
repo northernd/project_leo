@@ -17,6 +17,7 @@ public class LEOWorldObject extends LEOEntity {
 		} else {
 			//Entity is wall
 			this.id = LEOStaticStrings.OBJECT_ID_WALL;
+			setBlockFOV(true);
 			
 		}
 		
