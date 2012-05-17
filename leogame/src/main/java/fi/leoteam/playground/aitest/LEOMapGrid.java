@@ -11,7 +11,8 @@ import java.util.ArrayList;
 public class LEOMapGrid {
 	
 	private ArrayList<ArrayList<LEOEntity>> mapgrid = new ArrayList<ArrayList<LEOEntity>>();
-	private int tileSideLength = 11;
+	private String[][] fovMap;
+	private int mapsize = 1000;
 	//private int rowLength;
 
 	public LEOMapGrid() {
@@ -60,7 +61,14 @@ public class LEOMapGrid {
 				}
 			}
 			
-			mapgrid = MapGenerator.generateMap(50);
+			mapgrid = MapGenerator.generateMap(mapsize);
+			fovMap = new String[mapsize][mapsize];
+			
+			for(int i = 0; i < mapsize; i++) {
+				for(int j = 0; j < mapsize; j++) {
+					fovMap[i][j] = "?";
+				}
+			}
 			
 		} catch (FileNotFoundException e) {
 			LEOAITest.log.error("Virhe", e);
@@ -222,6 +230,303 @@ public class LEOMapGrid {
 		}
 		
 		return true;
+	}
+	
+	private boolean isValidTile(Square s) {
+		boolean result = false;
+		
+		if(s.getY() < 0 && s.getY() >= fovMap.length) {
+			return result;
+		}
+		if(s.getX() < 0 && s.getX() >= fovMap.length) {
+			return result;
+		}
+		
+		return true;
+	}
+	
+	public void calculateFOV(LEOEntity character) {
+		Square point = new Square(character.getLocation());
+		
+		long start = System.currentTimeMillis();
+		//First step, set every tile adjacent to character as visible
+		insertCharacterToFOVMap(character);
+		
+		//Second step, calculate N, E, S and W directions
+		calculateMainDirections(point);
+		
+		//printFOVMap();
+		
+		//Third step, calculate remaining areas
+		calculateRemainingAreasSE(point, point.getAdjacentSE().getAdjacentE(), point.getAdjacentSE().getAdjacentS());
+		calculateRemainingAreasNE(point, point.getAdjacentNE().getAdjacentE(), point.getAdjacentNE().getAdjacentN());
+		calculateRemainingAreasNW(point, point.getAdjacentNW().getAdjacentW(), point.getAdjacentNW().getAdjacentN());
+		calculateRemainingAreasSW(point, point.getAdjacentSW().getAdjacentW(), point.getAdjacentSW().getAdjacentS());
+		long end = System.currentTimeMillis()-start;
+		
+		System.out.println("Aika: "+end);
+		
+		//printFOVMap();
+		
+		
+		
+		
+	}
+	
+	private void calculateRemainingAreasSE(Square initial, Square point, Square point2) {
+		int x = point.getX();
+		int y = point.getY();
+		int x2 = point2.getX();
+		int y2 = point2.getY();
+		Square tmp, tmp2;
+		do {			
+			for(int i = x; i < mapsize && y < mapsize; i++) {
+				//System.out.println("PISTE ("+i+","+y+")");
+				tmp = new Square(i, y);
+				checkIfToAddToFOVMap(initial, tmp, Square.SE_SECTOR);
+			}
+			for(int j = y2; j < mapsize && x2 < mapsize; j++) {
+				//System.out.println("PISTE ("+x2+","+j+")");
+				tmp = new Square(x2, j);
+				checkIfToAddToFOVMap(initial, tmp, Square.SE_SECTOR);
+			}
+			x = x2+1;
+			y++;
+			
+			x2++;
+			y2 = y+1;
+			
+			//System.out.println("*****************************************************************");
+			//System.out.println("x: "+x+" y: "+y+" x2:"+x2+" y2:"+y2);
+		} while ((x < mapsize && y < mapsize) || (x2 < mapsize && y2 < mapsize));
+		//printFOVMap();
+	}
+	
+	private void calculateRemainingAreasSW(Square initial, Square point, Square point2) {
+		int x = point.getX();
+		int y = point.getY();
+		int x2 = point2.getX();
+		int y2 = point2.getY();
+		Square tmp, tmp2;
+		do {
+			for(int i = x; i >= 0 && y < mapsize; i--) {
+				//System.out.println("PISTE ("+i+","+y+")");
+				tmp = new Square(i, y);
+				checkIfToAddToFOVMap(initial, tmp, Square.SW_SECTOR);
+			}
+			for(int j = y2; j < mapsize && x2 >= 0; j++) {
+				//System.out.println("PISTE ("+x2+","+j+")");
+				tmp = new Square(x2, j);
+				checkIfToAddToFOVMap(initial, tmp, Square.SW_SECTOR);
+			}
+			x = x2-1;
+			y++;
+			
+			x2--;
+			y2 = y+1;
+			
+			
+			//System.out.println("*****************************************************************");
+			//System.out.println("x: "+x+" y: "+y+" x2: "+x2+" y2: "+y2);
+		} while ((x >= 0 && y < mapsize) || (x2 >= 0 && y2 < mapsize));
+		//printFOVMap();
+	}
+	
+	private void calculateRemainingAreasNE(Square initial, Square point, Square point2) {
+		int x = point.getX();
+		int y = point.getY();
+		int x2 = point2.getX();
+		int y2 = point2.getY();
+		//System.out.println(point.toString()+" "+point2.toString());
+		Square tmp, tmp2;
+		do {
+			for(int i = x; i < mapsize && y >= 0; i++) {
+				//System.out.println("PISTE ("+i+","+y+")");
+				tmp = new Square(i, y);
+				checkIfToAddToFOVMap(initial, tmp, Square.NE_SECTOR);
+			}
+			for(int j = y2; j >= 0 && x2 < mapsize; j--) {
+				//System.out.println("PISTE ("+x2+","+j+")");
+				tmp = new Square(x2, j);
+				checkIfToAddToFOVMap(initial, tmp, Square.NE_SECTOR);
+			}
+			x = x2+1;
+			y--;
+			
+			x2++;
+			y2 = y-11;
+			
+			//System.out.println("*****************************************************************");
+			//System.out.println("x: "+x+" y: "+y+" x2:"+x2+" y2:"+y2);
+		} while ((x < mapsize && y >= 0) || (x2 < mapsize && y2 >= 0));
+		//printFOVMap();
+	}
+	
+	private void calculateRemainingAreasNW(Square initial, Square point, Square point2) {
+		int x = point.getX();
+		int y = point.getY();
+		int x2 = point2.getX();
+		int y2 = point2.getY();
+		Square tmp, tmp2;
+		//System.out.println(point.toString()+" "+point2.toString());
+		do {
+			for(int i = x; i >= 0 && y >= 0; i--) {
+				//System.out.println("PISTE ("+i+","+y+")");
+				tmp = new Square(i, y);
+				checkIfToAddToFOVMap(initial, tmp, Square.NW_SECTOR);
+			}
+			for(int j = y2; j >= 0 && x2 < mapsize; j--) {
+				//System.out.println("PISTE ("+x2+","+j+")");
+				tmp = new Square(x2, j);
+				checkIfToAddToFOVMap(initial, tmp, Square.NW_SECTOR);
+			}
+			x = x2-1;
+			y--;
+			
+			x2--;
+			y2 = y-11;
+
+			//System.out.println("*****************************************************************");
+			//System.out.println("x: "+x+" y: "+y+" x2:"+x2+" y2:"+y2);
+		} while ((x >= 0 && y >= 0) || (x2 >= 0 && y2 >= 0));
+		//printFOVMap();
+	}
+	
+	private void checkIfToAddToFOVMap(Square s, Square s2) {
+		if(isTileVisibleInFOVMap(s2)) {
+			if(!getEntityFromLocation(s2).isBlockFOV()) {
+				addToFOVMap(s);
+			}
+		}
+	}
+	
+	private void checkIfToAddToFOVMap(Square initial, Square s, int sector) {
+		ArrayList<Square> possibilities = s.getPossibleLastSquares(sector);
+		boolean result = false;
+		//System.out.println("******************\n Checking point "+s.toString());
+		for(int i = 0; i < possibilities.size() && !result; i++) {
+			Square tmp = possibilities.get(i);
+			if(tmp.isSquareOnLine(initial, s)) {
+				//System.out.println("Is on line");
+				if(isTileVisibleInFOVMap(tmp)) {
+					result = getEntityFromLocation(tmp).isBlockFOV();
+				}
+				else {
+					result = true;
+				}
+				
+			}
+		}
+		
+		if(!result) {
+			addToFOVMap(s);
+		}
+	}
+	
+	private void calculateMainDirections(Square point) {
+		//North
+		int x, y;
+		
+		x = point.getX();
+		for(int i = point.getY()-2; i >= 0; i--) {
+			Square tmp = new Square(x, i);
+			Square tmp2 = tmp.getAdjacentS();
+			if(isTileVisibleInFOVMap(tmp2)) {
+				if(!getEntityFromLocation(tmp2).isBlockFOV()) {
+					addToFOVMap(tmp);
+				}
+			}
+		}
+		
+		//South
+		for(int i = point.getY()+2; i < mapsize; i++) {
+			Square tmp = new Square(x, i);
+			Square tmp2 = tmp.getAdjacentN();
+			if(isTileVisibleInFOVMap(tmp2)) {
+				if(!getEntityFromLocation(tmp2).isBlockFOV()) {
+					addToFOVMap(tmp);
+				}
+			}
+		}
+		
+		//West
+		y = point.getY();
+		for(int i = point.getX()-2; i >= 0; i--) {
+			Square tmp = new Square(i, y);
+			Square tmp2 = tmp.getAdjacentE();
+			if(isTileVisibleInFOVMap(tmp2)) {
+				if(!getEntityFromLocation(tmp2).isBlockFOV()) {
+					addToFOVMap(tmp);
+				}
+			}
+		}
+		
+		y = point.getY();
+		for(int i = point.getX()+2; i < mapsize; i++) {
+			Square tmp = new Square(i, y);
+			Square tmp2 = tmp.getAdjacentW();
+			if(isTileVisibleInFOVMap(tmp2)) {
+				if(!getEntityFromLocation(tmp2).isBlockFOV()) {
+					addToFOVMap(tmp);
+				}
+			}
+		}
+	}
+	
+	private boolean isTileVisibleInFOVMap(Square s) {
+		if(isValidTile(s)) {
+			if(fovMap[s.getY()][s.getX()].equals("?")) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+	
+	private void insertCharacterToFOVMap(LEOEntity character) {
+		Square point = new Square(character.getLocation());
+		fovMap[point.getY()][point.getX()] = character.toString();
+		
+		Square tmp = point.getAdjacentN();
+		addToFOVMap(tmp);
+		
+		tmp = point.getAdjacentNE();
+		addToFOVMap(tmp);
+		
+		tmp = point.getAdjacentE();
+		addToFOVMap(tmp);
+		
+		tmp = point.getAdjacentSE();
+		addToFOVMap(tmp);
+		
+		tmp = point.getAdjacentS();
+		addToFOVMap(tmp);
+		
+		tmp = point.getAdjacentSW();
+		addToFOVMap(tmp);
+		
+		tmp = point.getAdjacentW();
+		addToFOVMap(tmp);
+		
+		tmp = point.getAdjacentNW();
+		addToFOVMap(tmp);
+	}
+	
+	private void printFOVMap() {
+		for(int i = 0; i < fovMap.length; i++) {
+			for(int j = 0; j < fovMap.length; j++) {
+				System.out.print(fovMap[i][j]+" ");
+			}
+			System.out.println("");
+		}
+	}
+	
+	private void addToFOVMap(Square loc) {
+		int x = loc.getX();
+		int y = loc.getY();
+		if(x >= 0 && x < fovMap.length && y >= 0 && y < fovMap.length) {
+			fovMap[y][x] = getEntityFromLocation(loc).toString();
+		}
 	}
 	
 	public void calculateFOV(int[] point, LEOEntity character) {

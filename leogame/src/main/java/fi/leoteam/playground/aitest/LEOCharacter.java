@@ -38,7 +38,7 @@ public class LEOCharacter extends LEOEntity {
 		System.out.println("NW-loc: "+map.getAdjacentNW(this)[0]+","+map.getAdjacentNW(this)[1]);*/
 		int[] tmp = {1,1};
 		
-		map.calculateFOV(tmp, this);
+		map.calculateFOV(this);
 		
 	}
 	

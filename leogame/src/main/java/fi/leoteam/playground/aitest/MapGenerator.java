@@ -7,8 +7,8 @@ public class MapGenerator {
 	/**
 	 * Determine how many Xs and Ns there is. 0 = no obstacles, 1.0 = all obstacles
 	 */
-	final static double OBSTACLES = 0.0;
-	final static double XDENSITY = 0.0;
+	final static double OBSTACLES = 0.2;
+	final static double XDENSITY = 0.2;
 	
 	public static ArrayList<ArrayList<LEOEntity>> generateMap(int size){
 		ArrayList<ArrayList<LEOEntity>> grid = new ArrayList<ArrayList<LEOEntity>>();

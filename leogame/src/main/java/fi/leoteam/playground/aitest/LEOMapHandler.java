@@ -13,12 +13,15 @@ public class LEOMapHandler {
 		characterLocations = new ArrayList<LEOCharacter>();
 		characterLocations.addAll(grid.importMapFile());
 		
+		//System.out.println(grid.getMapWithCharacters(characterLocations));
+		System.out.println("");
 		characterLocations.get(0).calculateFOV();
 	}
 	
 	public void printDebugMap(boolean withCharacters) {
 		String map;
 		if(withCharacters) {
+			
 			//map = grid.getMapWithCharacters(characterLocations);
 		} else {
 			//map = grid.getMapAsString().toString();

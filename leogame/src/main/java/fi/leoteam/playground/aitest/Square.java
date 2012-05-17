@@ -9,14 +9,14 @@ public class Square {
 	private int real_y;
 	private int ne_corner[], se_corner[], sw_corner[], nw_corner[];
 	
-	private static int N_SECTOR = 0;
-	private static int NE_SECTOR = 1;
-	private static int E_SECTOR = 2;
-	private static int SE_SECTOR = 3;
-	private static int S_SECTOR = 4;
-	private static int SW_SECTOR = 5;
-	private static int W_SECTOR = 6;
-	private static int NW_SECTOR = 7;
+	public static int N_SECTOR = 0;
+	public static int NE_SECTOR = 1;
+	public static int E_SECTOR = 2;
+	public static int SE_SECTOR = 3;
+	public static int S_SECTOR = 4;
+	public static int SW_SECTOR = 5;
+	public static int W_SECTOR = 6;
+	public static int NW_SECTOR = 7;
 	
 	
 	public Square(int x, int y) {
@@ -87,8 +87,8 @@ public class Square {
 		ArrayList<Square> result = new ArrayList<Square>();
 
 		int x, y;
-		System.out.println(point1.toString());
-		System.out.println(point2.toString());
+		//System.out.println(point1.toString());
+		//System.out.println(point2.toString());
 		int[] startPoint = new int[2];
 		if(point1.getX() <= point2.getX()) {
 			startPoint[0] = point1.getX();
@@ -111,7 +111,7 @@ public class Square {
 		for(int i = startPoint[0]; i <= x; i++) {
 			for(int j = startPoint[1]; j <= y; j++) {
 				result.add(new Square(i, j));
-				System.out.println("Added square {"+i+","+j+"}");
+				//System.out.println("Added square {"+i+","+j+"}");
 			}
 		}
 		
@@ -184,16 +184,55 @@ public class Square {
 			result.add(getAdjacentN());
 			result.add(getAdjacentNW());
 		}
-		System.out.print("Mahdollisia seuraavia ruutuja ovat: ");
+		//System.out.print("Mahdollisia seuraavia ruutuja ovat: ");
 		for(int i = 0; i < result.size(); i++) {
-			System.out.print(" ("+result.get(i).getX()+","+result.get(i).getY()+") ");
+			//System.out.print(" ("+result.get(i).getX()+","+result.get(i).getY()+") ");
 		}
-		System.out.println("");
+		//System.out.println("");
+		return result;
+	}
+	
+	protected ArrayList<Square> getPossibleLastSquares(int sector) {
+		ArrayList<Square> result = new ArrayList<Square>();
+		
+		if(sector == N_SECTOR) {
+			result.add(getAdjacentS());
+		}
+		else if(sector == NE_SECTOR) {
+			result.add(getAdjacentW());
+			result.add(getAdjacentS());
+			result.add(getAdjacentSW());
+		}
+		else if(sector == E_SECTOR) {
+			result.add(getAdjacentW());
+		}
+		else if(sector == SE_SECTOR) {
+			result.add(getAdjacentN());
+			result.add(getAdjacentW());
+			result.add(getAdjacentNW());
+		}
+		else if(sector == S_SECTOR) {
+			result.add(getAdjacentN());
+		}
+		else if(sector == SW_SECTOR) {
+			result.add(getAdjacentN());
+			result.add(getAdjacentE());
+			result.add(getAdjacentNE());
+		}
+		else if(sector == W_SECTOR) {
+			result.add(getAdjacentE());
+		}
+		else {
+			result.add(getAdjacentE());
+			result.add(getAdjacentS());
+			result.add(getAdjacentSE());
+		}
+
 		return result;
 	}
 	
 	public boolean isSquareOnLine(Square startPoint, Square endPoint) {
-		System.out.println("Checking square : "+toString());
+		//System.out.println("Checking square : "+toString());
 		//West line
 		int x = pixel_x-LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER;
 		int result = cutsLineVertically(x, nw_corner[1], sw_corner[1], startPoint, endPoint);
@@ -219,19 +258,19 @@ public class Square {
 			return true;
 		}
 		
-		System.out.println("Line doesn't go through square "+getX()+","+getY());
+		//System.out.println("Line doesn't go through square "+getX()+","+getY());
 		return false;
 	}
 	
 	private int cutsLineVertically(int x, int start, int end, Square startPoint, Square endPoint) {
 		//int tmp = ((endPoint.getReal_y()-startPoint.getReal_y())/(endPoint.getX()-startPoint.getX())*(x-startPoint.getX())+startPoint.getReal_y());
 		float tmp = (float)((float)(-endPoint.getPixel_y()+startPoint.getPixel_y())/(float)(endPoint.getPixel_x()-startPoint.getPixel_x())*(x-startPoint.getPixel_x())-startPoint.getPixel_y());
-		if(start >= tmp && tmp >= end) {
-			System.out.println("Cuts line (vertically) at point "+tmp+" ["+start+","+end+"]");
+		if(start > tmp && tmp > end) {
+			//System.out.println("Cuts line (vertically) at point "+tmp+" ["+start+","+end+"]");
 			return 1;
 		}
 		
-		System.out.println("Doesn't cut line (vertically) at point "+tmp+" ["+start+","+end+"]");
+		//System.out.println("Doesn't cut line (vertically) at point "+tmp+" ["+start+","+end+"]");
 		return 0;
 	}
 	
@@ -239,11 +278,11 @@ public class Square {
 		//int tmp = (x-startPoint.getReal_y())*((endPoint.getX()-startPoint.getX())/(endPoint.getReal_y()-startPoint.getReal_y()))+startPoint.getX();
 		float tmp = (float)(x+startPoint.getPixel_y())*((float)(endPoint.getPixel_x()-startPoint.getPixel_x())/(float)(-endPoint.getPixel_y()+startPoint.getPixel_y()))+startPoint.getPixel_x();
 		if(start >= tmp && tmp >= end) {
-			System.out.println("Cuts line (horizontally) at point "+tmp+" ["+start+","+end+"]");
+			//System.out.println("Cuts line (horizontally) at point "+tmp+" ["+start+","+end+"]");
 			return 1;
 		}
 		
-		System.out.println("Doesn't cut line (horizontally) at point "+tmp+" ["+start+","+end+"]");
+		//System.out.println("Doesn't cut line (horizontally) at point "+tmp+" ["+start+","+end+"]");
 		return 0;
 	}
 	
@@ -267,35 +306,35 @@ public class Square {
 		return true;
 	}
 	
-	private Square getAdjacentN() {
+	public Square getAdjacentN() {
 		return new Square(getX(), getY()-1);
 	}
 	
-	private Square getAdjacentNE() {
+	public Square getAdjacentNE() {
 		return new Square(getX()+1, getY()-1);
 	}
 	
-	private Square getAdjacentE() {
+	public Square getAdjacentE() {
 		return new Square(getX()+1, getY());
 	}
 	
-	private Square getAdjacentSE() {
+	public Square getAdjacentSE() {
 		return new Square(getX()+1, getY()+1);
 	}
 	
-	private Square getAdjacentS() {
+	public Square getAdjacentS() {
 		return new Square(getX(), getY()+1);
 	}
 	
-	private Square getAdjacentSW() {
+	public Square getAdjacentSW() {
 		return new Square(getX()-1, getY()+1);
 	}
 	
-	private Square getAdjacentW() {
+	public Square getAdjacentW() {
 		return new Square(getX()-1, getY());
 	}
 	
-	private Square getAdjacentNW() {
+	public Square getAdjacentNW() {
 		return new Square(getX()-1, getY()-1);
 	}
 	
