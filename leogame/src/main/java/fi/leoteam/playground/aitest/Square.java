@@ -83,6 +83,14 @@ public class Square {
 		return ((half*(1+(point*2)))+(1*(2+(point*2))));
 	}
 	
+	protected static double twoPointsDistance(Square s1, Square s2) {
+		return Math.sqrt(Math.pow((s1.getPixel_x()-s2.getPixel_x()),2)+Math.pow((s1.getPixel_y()-s2.getPixel_y()),2));
+	}
+	
+	protected double twoPointsDistance(Square s) {
+		return Math.sqrt(Math.pow((getPixel_x()-s.getPixel_x()),2)+Math.pow((getPixel_y()-s.getPixel_y()),2));
+	}
+	
 	protected static ArrayList<Square> getPossibleSquares(Square point1, Square point2) {
 		ArrayList<Square> result = new ArrayList<Square>();
 
@@ -228,6 +236,37 @@ public class Square {
 			result.add(getAdjacentSE());
 		}
 
+		return result;
+	}
+	
+	protected ArrayList<Square> getPossibleDoubleLastSquares(int sector) {
+		Square tmp;
+		ArrayList<Square> result = new ArrayList<Square>();
+		if(sector == NE_SECTOR) {
+			tmp = getAdjacentSW();
+			result.add(tmp.getAdjacentW());
+			result.add(tmp.getAdjacentS());
+			result.add(tmp.getAdjacentSW());
+		}
+		else if(sector == SE_SECTOR) {
+			tmp = getAdjacentNW();
+			result.add(tmp.getAdjacentN());
+			result.add(tmp.getAdjacentW());
+			result.add(tmp.getAdjacentNW());
+		}
+		else if(sector == SW_SECTOR) {
+			tmp = getAdjacentNE();
+			result.add(tmp.getAdjacentN());
+			result.add(tmp.getAdjacentE());
+			result.add(tmp.getAdjacentNE());
+		}
+		else if(sector == NW_SECTOR) {
+			tmp = getAdjacentSE();
+			result.add(tmp.getAdjacentE());
+			result.add(tmp.getAdjacentS());
+			result.add(tmp.getAdjacentSE());
+		}
+		
 		return result;
 	}
 	
