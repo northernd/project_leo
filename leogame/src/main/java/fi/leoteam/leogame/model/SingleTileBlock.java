@@ -8,8 +8,8 @@ import fi.leoteam.leogame.rendering.Textured;
 
 public class SingleTileBlock implements Textured{
 	
-	public static final float GRIDITEMX = 18f;
-	public static final float GRIDITEMY = 20f;
+	public static float GRIDITEMX = 48f;
+	public static float GRIDITEMY = 55.25f;
 	
 	private Texture tile = null;
 	private Vector<Entity> innerObjects;

@@ -37,7 +37,7 @@ public class MapGenerator {
 	
 	private Vector<MapFloor> generateMapFloors(int size) throws IOException{
 		Vector<MapFloor> floors = new Vector<MapFloor>();
-		floors.add(generateEmptyFloor(size, textureLoader.getTexture("img/testtile.png")));
+		floors.add(generateEmptyFloor(size, textureLoader.getTexture("img/testtile2.png")));
 		for(int i = 0; i < N_OF_FLOORS-1; i++){
 			floors.add(generateEmptyFloor(size, null));
 		}

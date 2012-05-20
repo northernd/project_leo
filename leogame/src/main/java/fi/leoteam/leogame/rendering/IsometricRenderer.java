@@ -73,8 +73,8 @@ public class IsometricRenderer {
 	
 	public void drawSingleTileBlock(SingleTileBlock tileblock, int i, int j, float centerX, float yOffset){
 		
-		float xCoord = centerX + (SingleTileBlock.GRIDITEMX/2) * getXFromGridLocation(i, j);
-		float yCoord = yOffset + (SingleTileBlock.GRIDITEMY/4) * getYFromGridLocation(i, j);
+		float xCoord = centerX + (SingleTileBlock.GRIDITEMX/2) * getXFromGridLocation(i, j) - camera.getX();
+		float yCoord = yOffset + (SingleTileBlock.GRIDITEMY/4) * getYFromGridLocation(i, j) - camera.getY();
 		float width = SingleTileBlock.GRIDITEMX;
 		float height = SingleTileBlock.GRIDITEMY;
 		if(tileblock.getCurrentTexture() != null){

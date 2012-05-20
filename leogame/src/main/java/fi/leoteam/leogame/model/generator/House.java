@@ -28,7 +28,7 @@ public class House extends Structure{
 				Vector<SingleTileBlock> row = new Vector<SingleTileBlock>();
 				for(int j = 0; j < width; j++){
 					SingleTileBlock tileBlock = new SingleTileBlock(null);
-					tileBlock.addInnerObject(new StaticEntity(0,0, loader.getTexture("img/testblock.png")));
+					tileBlock.addInnerObject(new StaticEntity(0,0, loader.getTexture("img/testblock3.png")));
 					row.add(tileBlock);
 				}
 				floor.add(row);
