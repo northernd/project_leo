@@ -2,6 +2,9 @@ package fi.leoteam.playground.aitest;
 
 import static org.junit.Assert.*;
 
+import java.util.HashMap;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,10 +12,10 @@ public class SquareTest {
 
 	@Before
 	public void setUp() throws Exception {
+		
 	}
 
-	@Test
-	public void test() {
+	public void testGetPossibleSector() {
 		Square p1 = new Square(3,3);
 		
 		Square p2 = new Square(3,2);
@@ -32,5 +35,16 @@ public class SquareTest {
 		p2 = new Square(2,2);
 		assertEquals(7, Square.getPossibleSector(p1, p2));
 	}
+	
+	@Test
+	public void testCalculateLastFOVSquaresNWSector() {
+		Square tmp = new Square(12,23);
+		
+		List<Square> list = tmp.calculateLastFOVSquaresNWSector(9);
+		for(int i = 0; i < list.size(); i++) {
+			System.out.println(list.get(i).toStringShort());
+		}
+	}
+	
 
 }

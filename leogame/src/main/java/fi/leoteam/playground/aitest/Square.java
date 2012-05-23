@@ -1,13 +1,16 @@
 package fi.leoteam.playground.aitest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Square {
 	private int x,y;
 	private int pixel_y, pixel_x;
 	private int real_y;
 	private int ne_corner[], se_corner[], sw_corner[], nw_corner[];
+	private float area;
 	
 	public static int N_SECTOR = 0;
 	public static int NE_SECTOR = 1;
@@ -27,6 +30,8 @@ public class Square {
 		pixel_y = convertOnePointToPixelLocation(y);
 		
 		real_y = -y;
+		
+		area = (float)Math.pow(LEOStaticStrings.SQUARE_SIDE_LENGTH,2);
 		
 		calculateCorners();
 	}
@@ -88,7 +93,15 @@ public class Square {
 	}
 	
 	protected double twoPointsDistance(Square s) {
-		return Math.sqrt(Math.pow((getPixel_x()-s.getPixel_x()),2)+Math.pow((getPixel_y()-s.getPixel_y()),2));
+		double result = Math.sqrt(Math.pow((getPixel_x()-s.getPixel_x()),2)+Math.pow((getPixel_y()-s.getPixel_y()),2));
+		//System.out.println("Ruutujen "+toString()+" **** "+s.toString()+" välimatka on: "+result);
+		return result;
+	}
+	
+	protected boolean isLastSquare(Square s, int fovlength) {
+		double result = Math.sqrt(Math.pow((getPixel_x()-s.getPixel_x()),2)+Math.pow((getPixel_y()-s.getPixel_y()),2))+LEOStaticStrings.SQUARE_SIDE_LENGTH;
+		//System.out.println("Ruutujen "+toStringShort()+" **** "+s.toStringShort()+" välimatka on: "+result+" (fovlength="+fovlength);
+		return result > fovlength;
 	}
 	
 	protected static ArrayList<Square> getPossibleSquares(Square point1, Square point2) {
@@ -157,6 +170,7 @@ public class Square {
 
 	}
 	
+	//TODO : Check that result is initialized in a best way
 	protected ArrayList<Square> getPossibleNextSquares(int sector) {
 		ArrayList<Square> result = new ArrayList<Square>();
 		
@@ -270,59 +284,113 @@ public class Square {
 		return result;
 	}
 	
-	public boolean isSquareOnLine(Square startPoint, Square endPoint) {
+	protected float calculateSurfaceAreaRatio(HashMap<Integer, Float> intersections) {
+		float area;
+		if(intersections.containsKey(E_SECTOR) && intersections.containsKey(S_SECTOR)) {
+			area = Math.abs(((se_corner[0]-intersections.get(S_SECTOR))*(se_corner[1]-intersections.get(E_SECTOR))))/2;
+		}
+		else if(intersections.containsKey(E_SECTOR) && intersections.containsKey(N_SECTOR)) {
+			area = Math.abs(((ne_corner[0]-intersections.get(N_SECTOR))*(intersections.get(E_SECTOR)-ne_corner[1])))/2;
+		}
+		else if(intersections.containsKey(W_SECTOR) && intersections.containsKey(N_SECTOR)) {
+			area = Math.abs(((intersections.get(N_SECTOR)-nw_corner[0])*(intersections.get(W_SECTOR)-nw_corner[1])))/2;
+		}
+		else if(intersections.containsKey(W_SECTOR) && intersections.containsKey(S_SECTOR)) {
+			area = Math.abs(((intersections.get(S_SECTOR)-sw_corner[0])*(sw_corner[1]-intersections.get(W_SECTOR))))/2;
+		}
+		else {
+			return 1f;
+		}
+		
+		return (area/(this.area-area));
+	}
+	
+	public int showSquare(Square startPoint, Square endPoint) {
+		HashMap<Integer, Float> intersections = (HashMap<Integer, Float>)isSquareOnLine(startPoint, endPoint);
+		
+		if(intersections.size() < 2) {
+			return -1;
+		}
+		else {
+			float result = calculateSurfaceAreaRatio(intersections);
+			//System.out.println("FLOAT: "+result);
+			if(result < 0.1) {
+				return 0;
+			}
+			return 1;
+		}
+	}
+	
+	public Map<Integer, Float> isSquareOnLine(Square startPoint, Square endPoint) {
 		//System.out.println("Checking square : "+toString());
+		HashMap<Integer, Float> intersections = new HashMap<Integer, Float>();
+		float tmp;
+
 		//West line
 		int x = pixel_x-LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER;
-		int result = cutsLineVertically(x, nw_corner[1], sw_corner[1], startPoint, endPoint);
+		tmp = cutsLineVertically(x, nw_corner[1], sw_corner[1], startPoint, endPoint);
+		if(tmp != 0f) {
+			intersections.put(W_SECTOR, tmp);
+		}
+		
 		
 		//East line
 		x = pixel_x+LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER;
-		result += cutsLineVertically(x, ne_corner[1], se_corner[1], startPoint, endPoint);
-		if(result == 2) {
-			return true;
+		tmp = cutsLineVertically(x, ne_corner[1], se_corner[1], startPoint, endPoint);
+		if(tmp != 0f) {
+			intersections.put(E_SECTOR, tmp);
+		}
+		if(intersections.size() == 2) {
+			return intersections;
 		}
 		
 		//North line
 		x = -pixel_y+LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER;
-		result += cutsLineHorizontally(x, ne_corner[0], nw_corner[0], startPoint, endPoint);
-		if(result == 2) {
-			return true;
+		tmp = cutsLineHorizontally(x, ne_corner[0], nw_corner[0], startPoint, endPoint);
+		if(tmp != 0f) {
+			intersections.put(N_SECTOR, tmp);
+		}
+		if(intersections.size() == 2) {
+			return intersections;
 		}
 		
 		//South line
 		x = -pixel_y-LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER;
-		result += cutsLineHorizontally(x, se_corner[0], sw_corner[0], startPoint, endPoint);
-		if(result == 2) {
-			return true;
+		tmp = cutsLineHorizontally(x, se_corner[0], sw_corner[0], startPoint, endPoint);
+		if(tmp != 0f) {
+			intersections.put(S_SECTOR, tmp);
+		}
+		if(intersections.size() == 2) {
+			return intersections;
 		}
 		
+		return intersections;
+		
 		//System.out.println("Line doesn't go through square "+getX()+","+getY());
-		return false;
 	}
 	
-	private int cutsLineVertically(int x, int start, int end, Square startPoint, Square endPoint) {
+	private float cutsLineVertically(int x, int start, int end, Square startPoint, Square endPoint) {
 		//int tmp = ((endPoint.getReal_y()-startPoint.getReal_y())/(endPoint.getX()-startPoint.getX())*(x-startPoint.getX())+startPoint.getReal_y());
 		float tmp = (float)((float)(-endPoint.getPixel_y()+startPoint.getPixel_y())/(float)(endPoint.getPixel_x()-startPoint.getPixel_x())*(x-startPoint.getPixel_x())-startPoint.getPixel_y());
 		if(start > tmp && tmp > end) {
 			//System.out.println("Cuts line (vertically) at point "+tmp+" ["+start+","+end+"]");
-			return 1;
+			return tmp;
 		}
 		
 		//System.out.println("Doesn't cut line (vertically) at point "+tmp+" ["+start+","+end+"]");
-		return 0;
+		return 0f;
 	}
 	
-	private int cutsLineHorizontally(int x, int start, int end, Square startPoint, Square endPoint) {
+	private float cutsLineHorizontally(int x, int start, int end, Square startPoint, Square endPoint) {
 		//int tmp = (x-startPoint.getReal_y())*((endPoint.getX()-startPoint.getX())/(endPoint.getReal_y()-startPoint.getReal_y()))+startPoint.getX();
 		float tmp = (float)(x+startPoint.getPixel_y())*((float)(endPoint.getPixel_x()-startPoint.getPixel_x())/(float)(-endPoint.getPixel_y()+startPoint.getPixel_y()))+startPoint.getPixel_x();
 		if(start >= tmp && tmp >= end) {
 			//System.out.println("Cuts line (horizontally) at point "+tmp+" ["+start+","+end+"]");
-			return 1;
+			return tmp;
 		}
 		
 		//System.out.println("Doesn't cut line (horizontally) at point "+tmp+" ["+start+","+end+"]");
-		return 0;
+		return 0f;
 	}
 	
 	@Override
@@ -330,6 +398,11 @@ public class Square {
 		String result = "Center: ("+getX()+","+getY()+") - Pixel Location: ("+getPixel_x()+","+getPixel_y()+") - Real Y:"+getReal_y();
 		result += "\n REAL CORNERS: NE ("+ne_corner[0]+","+ne_corner[1]+"), SE ("+se_corner[0]+","+se_corner[1]+"), SW ("+sw_corner[0]+","
 				+sw_corner[1]+"), NW ("+nw_corner[0]+","+nw_corner[1]+")";
+		return result;
+	}
+	
+	public String toStringShort() {
+		String result = "("+getX()+","+getY()+")";
 		return result;
 	}
 	
@@ -379,6 +452,166 @@ public class Square {
 	
 	public String getLocationAsSimpleString() {
 		return "("+getX()+","+getY()+")";
+	}
+	
+	public List<Square> calculateLastFOVSquaresNWSector(int fovlength) {
+		ArrayList<Square> result = new ArrayList<Square>();
+		Square tmp = new Square(getX()-fovlength, getY());
+		
+		int multipler = ((fovlength-6)/2)*1+3;
+		
+		for(int i = 1; i < multipler; i++) {
+			tmp = tmp.getAdjacentN();
+			result.add(tmp);
+		}
+		
+		if(fovlength % 2 == 0) {
+			for(int i = 0; i <= multipler; i++) {
+				tmp = tmp.getAdjacentNE();
+				result.add(tmp);
+			}
+		}
+		else {
+			tmp = tmp.getAdjacentNE();
+			result.add(tmp);
+			tmp = tmp.getAdjacentN();
+			result.add(tmp);
+			for(int i = 1; i < multipler; i++) {
+				tmp = tmp.getAdjacentNE();
+				result.add(tmp);
+			}
+			tmp = tmp.getAdjacentE();
+			result.add(tmp);
+			tmp = tmp.getAdjacentNE();
+			result.add(tmp);
+		}
+		
+		for(int i = 1; i < multipler-1; i++) {
+			tmp = tmp.getAdjacentE();
+			result.add(tmp);
+		}
+		
+		return result;
+	}
+	
+	public List<Square> calculateLastFOVSquaresNESector(int fovlength) {
+		ArrayList<Square> result = new ArrayList<Square>();
+		Square tmp = new Square(getX()+fovlength, getY());
+		
+		int multipler = ((fovlength-6)/2)*1+3;
+		
+		for(int i = 1; i < multipler; i++) {
+			tmp = tmp.getAdjacentN();
+			result.add(tmp);
+		}
+		
+		if(fovlength % 2 == 0) {
+			for(int i = 0; i <= multipler; i++) {
+				tmp = tmp.getAdjacentNW();
+				result.add(tmp);
+			}
+		}
+		else {
+			tmp = tmp.getAdjacentNW();
+			result.add(tmp);
+			tmp = tmp.getAdjacentN();
+			result.add(tmp);
+			for(int i = 1; i < multipler; i++) {
+				tmp = tmp.getAdjacentNW();
+				result.add(tmp);
+			}
+			tmp = tmp.getAdjacentW();
+			result.add(tmp);
+			tmp = tmp.getAdjacentNW();
+			result.add(tmp);
+		}
+		
+		for(int i = 1; i < multipler-1; i++) {
+			tmp = tmp.getAdjacentW();
+			result.add(tmp);
+		}
+		
+		return result;
+	}
+	
+	public List<Square> calculateLastFOVSquaresSESector(int fovlength) {
+		ArrayList<Square> result = new ArrayList<Square>();
+		Square tmp = new Square(getX()+fovlength, getY());
+		
+		int multipler = ((fovlength-6)/2)*1+3;
+		
+		for(int i = 1; i < multipler; i++) {
+			tmp = tmp.getAdjacentS();
+			result.add(tmp);
+		}
+		
+		if(fovlength % 2 == 0) {
+			for(int i = 0; i <= multipler; i++) {
+				tmp = tmp.getAdjacentSW();
+				result.add(tmp);
+			}
+		}
+		else {
+			tmp = tmp.getAdjacentSW();
+			result.add(tmp);
+			tmp = tmp.getAdjacentS();
+			result.add(tmp);
+			for(int i = 1; i < multipler; i++) {
+				tmp = tmp.getAdjacentSW();
+				result.add(tmp);
+			}
+			tmp = tmp.getAdjacentW();
+			result.add(tmp);
+			tmp = tmp.getAdjacentSW();
+			result.add(tmp);
+		}
+		
+		for(int i = 1; i < multipler-1; i++) {
+			tmp = tmp.getAdjacentW();
+			result.add(tmp);
+		}
+		
+		return result;
+	}
+	
+	public List<Square> calculateLastFOVSquaresSWSector(int fovlength) {
+		ArrayList<Square> result = new ArrayList<Square>();
+		Square tmp = new Square(getX()-fovlength, getY());
+		
+		int multipler = ((fovlength-6)/2)*1+3;
+		
+		for(int i = 1; i < multipler; i++) {
+			tmp = tmp.getAdjacentS();
+			result.add(tmp);
+		}
+		
+		if(fovlength % 2 == 0) {
+			for(int i = 0; i <= multipler; i++) {
+				tmp = tmp.getAdjacentSE();
+				result.add(tmp);
+			}
+		}
+		else {
+			tmp = tmp.getAdjacentSE();
+			result.add(tmp);
+			tmp = tmp.getAdjacentS();
+			result.add(tmp);
+			for(int i = 1; i < multipler; i++) {
+				tmp = tmp.getAdjacentSE();
+				result.add(tmp);
+			}
+			tmp = tmp.getAdjacentE();
+			result.add(tmp);
+			tmp = tmp.getAdjacentSE();
+			result.add(tmp);
+		}
+		
+		for(int i = 1; i < multipler-1; i++) {
+			tmp = tmp.getAdjacentE();
+			result.add(tmp);
+		}
+		
+		return result;
 	}
 	
 }

@@ -3,17 +3,18 @@
 //kertoo AI-hahmon/hahmojen (käytännössä epäiltyjen) aloitussijainnit. Y-koord. annetaan ensin, sitten väliviiva, ja sitten x-koord.
 //Esimerkiksi: @3-3 -> jos halutaan useampi hahmo, sijainnit erotetaan pilkulla, esim. @1-2,2-1
 //Merkit X ja . ja N katsotaan kuuluvaksi karttaan (X = seinä, . = tyhjä ruutu, N = NoGo-alue). Erotetaan jokaisella rivillä jokainen ruutu pilkulla
-@12-12
+@10-10
+//@500-500
 .,.,.,.,.,.,.,.,.,.,X,.,.,.,.,X,.,.,.,.,.,.,.,.
 .,.,.,.,.,.,.,.,.,.,X,.,.,.,.,X,.,.,.,.,.,.,.,.
 .,.,X,X,X,X,.,.,.,.,X,.,.,.,.,X,.,.,.,.,.,.,.,.
 .,.,X,.,.,X,.,.,.,.,X,.,.,.,.,X,.,.,.,.,.,.,.,.
 .,.,X,X,X,X,.,.,.,.,X,.,.,.,.,X,.,.,.,.,X,X,X,X
-.,.,.,.,.,.,.,.,.,.,.,X,X,X,X,X,.,.,.,.,X,.,.,.
+.,.,.,.,.,.,.,.,.,.,X,X,X,X,X,X,.,.,.,.,X,.,.,.
 .,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,X,.,.,.
 X,X,X,X,X,X,.,.,.,.,.,X,X,.,.,.,.,.,.,.,X,.,.,.
 .,.,.,.,.,X,.,.,.,.,.,.,.,.,.,.,.,.,.,.,X,X,X,X
-.,.,.,.,.,X,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.
+.,.,.,.,.,X,.,.,.,.,.,.,.,.,.,X,.,.,.,.,.,.,.,.
 .,.,.,.,.,X,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.
 X,X,X,X,X,X,.,.,.,.,.,.,.,.,.,.,.,X,X,X,X,X,X,X
 .,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,X,.,.,.,.,.,.

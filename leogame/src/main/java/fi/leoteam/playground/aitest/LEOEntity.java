@@ -34,7 +34,7 @@ public abstract class LEOEntity {
 		this.facing = facing;
 	}
 
-	public boolean isBlockFOV() {
+	public boolean blocksFOV() {
 		return blockFOV;
 	}
 

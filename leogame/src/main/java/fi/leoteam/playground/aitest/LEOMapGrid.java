@@ -8,12 +8,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 public class LEOMapGrid {
 	
 	private ArrayList<ArrayList<LEOEntity>> mapgrid = new ArrayList<ArrayList<LEOEntity>>();
 	private String[][] fovMap;
 	private int mapsize = 24;
-	private int fovLength = 24;
+	private int fovLength = 10;
 	//private int rowLength;
 
 	public LEOMapGrid() {
@@ -68,7 +69,7 @@ public class LEOMapGrid {
 			
 			for(int i = 0; i < mapsize; i++) {
 				for(int j = 0; j < mapsize; j++) {
-					fovMap[i][j] = "?";
+					fovMap[i][j] = LEOStaticStrings.OBJECT_STRING_NOT_VISIBLE;
 				}
 			}
 			
@@ -275,7 +276,7 @@ public class LEOMapGrid {
 		
 	}
 	
-	private void calculateRemainingAreasSE(Square initial, Square point, Square point2) {
+	/*private void calculateRemainingAreasSE(Square initial, Square point, Square point2) {
 		int x = point.getX();
 		int y = point.getY();
 		int x2 = point2.getX();
@@ -323,9 +324,9 @@ public class LEOMapGrid {
 			}
 		} while (((x < mapsize && y < mapsize) || (x2 < mapsize && y2 < mapsize)) && roundFlag);
 		//printFOVMap();
-	}
+	}*/
 	
-	private void calculateRemainingAreasSW(Square initial, Square point, Square point2) {
+	/*private void calculateRemainingAreasSW(Square initial, Square point, Square point2) {
 		int x = point.getX();
 		int y = point.getY();
 		int x2 = point2.getX();
@@ -374,9 +375,9 @@ public class LEOMapGrid {
 			}
 		} while (((x >= 0 && y < mapsize) || (x2 >= 0 && y2 < mapsize)) && roundFlag);
 		//printFOVMap();
-	}
+	}*/
 	
-	private void calculateRemainingAreasNE(Square initial, Square point, Square point2) {
+	/*private void calculateRemainingAreasNE(Square initial, Square point, Square point2) {
 		int x = point.getX();
 		int y = point.getY();
 		int x2 = point2.getX();
@@ -426,14 +427,14 @@ public class LEOMapGrid {
 			}
 		} while (((x < mapsize && y >= 0) || (x2 < mapsize && y2 >= 0)) && roundFlag);
 		//printFOVMap();
-	}
+	}*/
 	
-	private void calculateRemainingAreasNW(Square initial, Square point, Square point2) {
+	/*private void calculateRemainingAreasNW(Square initial, Square point, Square point2) {
 		int x = point.getX();
 		int y = point.getY();
 		int x2 = point2.getX();
 		int y2 = point2.getY();
-		int fovLength = this.fovLength*LEOStaticStrings.SQUARE_SIDE_LENGTH;
+		int fovLength = (this.fovLength-1)*LEOStaticStrings.SQUARE_SIDE_LENGTH+(2*LEOStaticStrings.SQUARE_SIDE_HALF_WITH_CENTER);
 		Square tmp;
 		boolean flag, roundFlag = true;
 		//System.out.println(point.toString()+" "+point2.toString());
@@ -447,9 +448,15 @@ public class LEOMapGrid {
 					tmp = new Square(i, y);
 					if(initial.twoPointsDistance(tmp) <= fovLength) {
 						checkIfToAddToFOVMap(initial, tmp, Square.NW_SECTOR);
+						calculateFOVToSinglePoint(initial, tmp);
 					}
 					else {
 						flag = false;
+					}
+					if(initial.isLastSquare(tmp, fovLength)) {
+						flag = false;
+						//checkIfToAddToFOVMap(initial, tmp, Square.NW_SECTOR);
+						calculateFOVToSinglePoint(initial, tmp);
 					}
 					
 				}
@@ -459,9 +466,14 @@ public class LEOMapGrid {
 					tmp = new Square(x2, j);
 					if(initial.twoPointsDistance(tmp) <= fovLength) {
 						checkIfToAddToFOVMap(initial, tmp, Square.NW_SECTOR);
+						calculateFOVToSinglePoint(initial, tmp);
 					}
 					else {
 						flag = false;
+					}
+					if(initial.isLastSquare(tmp, fovLength)) {
+						flag = false;
+						calculateFOVToSinglePoint(initial, tmp);
 					}
 				}
 				x = x2-1;
@@ -479,20 +491,65 @@ public class LEOMapGrid {
 			
 		} while (((x >= 0 && y >= 0) || (x2 >= 0 && y2 >= 0)) && roundFlag);
 		//printFOVMap();
+	}*/
+	
+	private void calculateRemainingAreasNW(Square initial, Square point, Square point2) {
+		
+		//int fovLength = (this.fovLength-1)*LEOStaticStrings.SQUARE_SIDE_LENGTH+(2*LEOStaticStrings.SQUARE_SIDE_HALF_WITH_CENTER);
+		List<Square> lastOnes = initial.calculateLastFOVSquaresNWSector(this.fovLength);
+		for(int i = 0; i < lastOnes.size(); i++) {
+			Square tmp = lastOnes.get(i);
+			calculateFOVToSinglePoint(initial, tmp);
+		}
+		
 	}
 	
-	private void checkIfToAddToFOVMap(Square initial, Square s, int sector) {
+	private void calculateRemainingAreasNE(Square initial, Square point, Square point2) {
+		
+		//int fovLength = (this.fovLength-1)*LEOStaticStrings.SQUARE_SIDE_LENGTH+(2*LEOStaticStrings.SQUARE_SIDE_HALF_WITH_CENTER);
+		List<Square> lastOnes = initial.calculateLastFOVSquaresNESector(this.fovLength);
+		for(int i = 0; i < lastOnes.size(); i++) {
+			Square tmp = lastOnes.get(i);
+			calculateFOVToSinglePoint(initial, tmp);
+		}
+		
+	}
+	
+	private void calculateRemainingAreasSE(Square initial, Square point, Square point2) {
+		
+		//int fovLength = (this.fovLength-1)*LEOStaticStrings.SQUARE_SIDE_LENGTH+(2*LEOStaticStrings.SQUARE_SIDE_HALF_WITH_CENTER);
+		List<Square> lastOnes = initial.calculateLastFOVSquaresSESector(this.fovLength);
+		for(int i = 0; i < lastOnes.size(); i++) {
+			Square tmp = lastOnes.get(i);
+			calculateFOVToSinglePoint(initial, tmp);
+		}
+		
+	}
+	
+	private void calculateRemainingAreasSW(Square initial, Square point, Square point2) {
+		
+		//int fovLength = (this.fovLength-1)*LEOStaticStrings.SQUARE_SIDE_LENGTH+(2*LEOStaticStrings.SQUARE_SIDE_HALF_WITH_CENTER);
+		List<Square> lastOnes = initial.calculateLastFOVSquaresSWSector(this.fovLength);
+		for(int i = 0; i < lastOnes.size(); i++) {
+			Square tmp = lastOnes.get(i);
+			calculateFOVToSinglePoint(initial, tmp);
+		}
+		
+	}
+	
+	/*private void checkIfToAddToFOVMap(Square initial, Square s, int sector) {
 		ArrayList<Square> possibilities = s.getPossibleLastSquares(sector);
 		boolean result = false;
 		//System.out.println("******************\n Checking point "+s.toString());
 		for(int i = 0; i < possibilities.size() && !result; i++) {
 			Square tmp = possibilities.get(i);
 			//System.out.println(i+". mahdollisuus: "+tmp.toString());
-			if(tmp.isSquareOnLine(initial, s)) {
+			//if(tmp.isSquareOnLine(initial, s).size() >= 2) {
+			if(tmp.showSquare(initial, s)) {
 				//System.out.println("Is on line");
 				if(isTileVisibleInFOVMap(tmp)) {
 					//System.out.println("Is visible");
-					result = getEntityFromLocation(tmp).isBlockFOV();
+					result = getEntityFromLocation(tmp).blocksFOV();
 					//System.out.println("Blocks sight: "+result);
 				}
 				else {
@@ -509,11 +566,12 @@ public class LEOMapGrid {
 			for(int i = 0; i < possibilities.size() && !result; i++) {
 				Square tmp = possibilities.get(i);
 				//System.out.println(i+". mahdollisuus: "+tmp.toString());
-				if(tmp.isSquareOnLine(initial, s)) {
+				//if(tmp.isSquareOnLine(initial, s).size() >= 2) {
+				if(tmp.showSquare(initial, s)) {
 					//System.out.println("Is on line");
 					if(isTileVisibleInFOVMap(tmp)) {
 						//System.out.println("Is visible");
-						result = getEntityFromLocation(tmp).isBlockFOV();
+						result = getEntityFromLocation(tmp).blocksFOV();
 						//System.out.println("Blocks sight: "+result);
 					}
 					else {
@@ -530,7 +588,7 @@ public class LEOMapGrid {
 		}
 		
 		
-	}
+	}*/
 	
 	private void calculateMainDirections(Square point) {
 		//North
@@ -538,11 +596,11 @@ public class LEOMapGrid {
 		int calc = 1;
 		
 		x = point.getX();
-		for(int i = point.getY()-2; i >= 0 && calc <= fovLength; i--) {
+		for(int i = point.getY()-2; i >= 0 && calc < fovLength; i--) {
 			Square tmp = new Square(x, i);
 			Square tmp2 = tmp.getAdjacentS();
 			if(isTileVisibleInFOVMap(tmp2)) {
-				if(!getEntityFromLocation(tmp2).isBlockFOV()) {
+				if(!getEntityFromLocation(tmp2).blocksFOV()) {
 					addToFOVMap(tmp);
 				}
 			}
@@ -551,11 +609,11 @@ public class LEOMapGrid {
 		
 		calc = 1;
 		//South
-		for(int i = point.getY()+2; i < mapsize && calc <= fovLength; i++) {
+		for(int i = point.getY()+2; i < mapsize && calc < fovLength; i++) {
 			Square tmp = new Square(x, i);
 			Square tmp2 = tmp.getAdjacentN();
 			if(isTileVisibleInFOVMap(tmp2)) {
-				if(!getEntityFromLocation(tmp2).isBlockFOV()) {
+				if(!getEntityFromLocation(tmp2).blocksFOV()) {
 					addToFOVMap(tmp);
 				}
 			}
@@ -565,11 +623,11 @@ public class LEOMapGrid {
 		calc = 1;
 		//West
 		y = point.getY();
-		for(int i = point.getX()-2; i >= 0 && calc <= fovLength; i--) {
+		for(int i = point.getX()-2; i >= 0 && calc < fovLength; i--) {
 			Square tmp = new Square(i, y);
 			Square tmp2 = tmp.getAdjacentE();
 			if(isTileVisibleInFOVMap(tmp2)) {
-				if(!getEntityFromLocation(tmp2).isBlockFOV()) {
+				if(!getEntityFromLocation(tmp2).blocksFOV()) {
 					addToFOVMap(tmp);
 				}
 			}
@@ -578,11 +636,11 @@ public class LEOMapGrid {
 		
 		calc = 1;
 		y = point.getY();
-		for(int i = point.getX()+2; i < mapsize && calc <= fovLength; i++) {
+		for(int i = point.getX()+2; i < mapsize && calc < fovLength; i++) {
 			Square tmp = new Square(i, y);
 			Square tmp2 = tmp.getAdjacentW();
 			if(isTileVisibleInFOVMap(tmp2)) {
-				if(!getEntityFromLocation(tmp2).isBlockFOV()) {
+				if(!getEntityFromLocation(tmp2).blocksFOV()) {
 					addToFOVMap(tmp);
 				}
 			}
@@ -592,7 +650,7 @@ public class LEOMapGrid {
 	
 	private boolean isTileVisibleInFOVMap(Square s) {
 		if(isValidTile(s)) {
-			if(fovMap[s.getY()][s.getX()].equals("?")) {
+			if(fovMap[s.getY()][s.getX()].equals(LEOStaticStrings.OBJECT_STRING_NOT_VISIBLE)) {
 				return false;
 			}
 		}
@@ -663,30 +721,12 @@ public class LEOMapGrid {
 		}
 	}
 	
-	public void calculateFOV(int[] point, LEOEntity character) {
-		Square point1 = new Square(character.getLocation());
-		
-		//Square point2 = new Square(299,299);
-		long startTime = System.currentTimeMillis();
-		//ArrayList<Square>possibleSquares = Square.getPossibleSquares(point1, point2);
-		//calculateIntersection(possibleSquares, point1, point2);
-		for(int i = 0; i < 50; i++) {
-			for(int j = 0; j < 50; j++) {
-				Square tmp = new Square(i, j);
-				if(!tmp.equals(point1)) {
-					calculateFOVToSinglePoint(point1, tmp);
-				}
-			}
-		}
-		
-		long endTime = System.currentTimeMillis() - startTime;
-		System.out.println("Kulunut aika: "+endTime);
-	}
-	
-	private boolean calculateFOVToSinglePoint(Square startPoint, Square targetPoint) {
+	/*private boolean calculateFOVToSinglePoint(Square startPoint, Square targetPoint) {
+		System.out.println("TARKISTETAAN RUUTUA ("+targetPoint.getX()+","+targetPoint.getY()+")");
 		boolean resultFlag = false;
 		int sector = Square.getPossibleSector(startPoint, targetPoint);
 		ArrayList<Square> nextOnes = startPoint.getPossibleNextSquares(sector);
+		ArrayList<Square> onLine = new ArrayList<Square>();
 		Square current = startPoint;
 		boolean outerFlag = true;
 		
@@ -698,10 +738,11 @@ public class LEOMapGrid {
 			else {
 				for(int i = 0; i < nextOnes.size(); i++) {
 					Square tmp = nextOnes.get(i);
-					if(tmp.isSquareOnLine(startPoint, targetPoint)) {
+					if(tmp.isSquareOnLine(startPoint, targetPoint).size() >= 2) {
 						resultFlag = getEntityFromLocation(tmp).isBlockFOV();
 						current = tmp;
-						System.out.println("****** Ruutu "+tmp.getLocationAsSimpleString()+" blockkaa näkymän "+resultFlag);
+						onLine.add(tmp);
+						//System.out.println("****** Ruutu "+tmp.getLocationAsSimpleString()+" blockkaa näkymän "+resultFlag);
 					}
 				}
 			}
@@ -710,13 +751,83 @@ public class LEOMapGrid {
 			
 		}
 		
+		
+		
+		System.out.println("**** Following squares are on the line ****");
+		for(int i = 0; i < onLine.size(); i++) {
+			System.out.println(onLine.get(i).toString());
+		}
+		System.out.println("********");
+		
 		resultFlag = !resultFlag;
-		System.out.println("Näköyhteys pisteiden välillä on: "+resultFlag);
+		//System.out.println("Näköyhteys pisteiden välillä on: "+resultFlag);
 		
 		return resultFlag;
+	}*/
+	
+	private void calculateFOVToSinglePoint(Square startPoint, Square targetPoint) {
+		//System.out.println("TARKISTETAAN RUUTUA "+targetPoint.toStringShort());
+		int sector = Square.getPossibleSector(startPoint, targetPoint);
+		ArrayList<Square> nextOnes = startPoint.getPossibleNextSquares(sector);
+		ArrayList<Square> onLine = new ArrayList<Square>();
+		//ArrayList<Integer> codes = new ArrayList<Integer>();
+		Square current = startPoint;
+		boolean outerFlag = true;
+		int code;
+		
+		while(outerFlag) {
+			
+			if(nextOnes.contains(targetPoint)) {
+				outerFlag = false;
+			}
+			else {
+				for(int i = 0; i < nextOnes.size(); i++) {
+					Square tmp = nextOnes.get(i);
+					//code = tmp.showSquare(startPoint, targetPoint);
+					if(tmp.isSquareOnLine(startPoint, targetPoint).size() >= 2) {
+						current = tmp;
+						onLine.add(tmp);
+						//codes.add(code);
+						
+						//System.out.println("****** Ruutu "+tmp.getLocationAsSimpleString()+" blockkaa näkymän "+resultFlag);
+					}
+				}
+			}
+			
+			nextOnes = current.getPossibleNextSquares(sector);
+			
+		}
+		
+		
+		
+		/*System.out.println("**** Following squares are on the line ****");
+		for(int i = 0; i < onLine.size(); i++) {
+			System.out.println(onLine.get(i).toStringShort());
+		}
+		System.out.println("********");*/
+		
+		onLine.add(targetPoint);
+		//codes.add(1);
+		boolean stop = false;
+		for(int i = 0; i < onLine.size() && !stop; i++) {
+			Square tmp = onLine.get(i);
+			//code = codes.get(i);
+			if(getEntityFromLocation(tmp).blocksFOV()/* && code == 1*/) {
+				stop = true;
+				//System.out.println("Square "+tmp.toStringShort()+" blocks the view!");
+			}
+			addToFOVMap(tmp);
+		}
+		
+		/*if(blocker != -1) {
+			for(int i = blocker; i < onLine.size(); i++) {
+				//System.out.println("Square "+onLine.get(i).toStringShort()+" is now hidden.");
+				hideInFOVMap(onLine.get(i));
+			}
+		}*/
 	}
 	
-	public ArrayList<Square> calculateIntersection(ArrayList<Square> possibleSquares, Square point1, Square point2) {
+	/*public ArrayList<Square> calculateIntersection(ArrayList<Square> possibleSquares, Square point1, Square point2) {
 		long startTime = System.currentTimeMillis();
 		ArrayList<Square> onLine = new ArrayList<Square>();
 		for(int i = 0; i < possibleSquares.size(); i++) {
@@ -737,5 +848,5 @@ public class LEOMapGrid {
 		System.out.println("********");
 
 		return onLine;
-	}
+	}*/
 }
