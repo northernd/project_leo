@@ -13,8 +13,8 @@ public class LEOMapGrid {
 	
 	private ArrayList<ArrayList<LEOEntity>> mapgrid = new ArrayList<ArrayList<LEOEntity>>();
 	private String[][] fovMap;
-	private int mapsize = 24;
-	private int fovLength = 10;
+	private int mapsize = 1000;
+	private int fovLength = 100;
 	//private int rowLength;
 
 	public LEOMapGrid() {
@@ -64,7 +64,7 @@ public class LEOMapGrid {
 				}
 			}
 			
-			//mapgrid = MapGenerator.generateMap(mapsize);
+			mapgrid = MapGenerator.generateMap(mapsize);
 			fovMap = new String[mapsize][mapsize];
 			
 			for(int i = 0; i < mapsize; i++) {
@@ -269,7 +269,11 @@ public class LEOMapGrid {
 		
 		System.out.println("Aika: "+end);
 		
-		printFOVMap();
+		//calculateFOVToSinglePoint(new Square(23,23), new Square(0,0));
+		//getSquaresOnLineNW(new Square(12,12), new Square(8,10));
+		//getSquaresOnLineSE(new Square(12,12), new Square(16,14));
+		
+		//printFOVMap();
 		
 		
 		
@@ -499,7 +503,17 @@ public class LEOMapGrid {
 		List<Square> lastOnes = initial.calculateLastFOVSquaresNWSector(this.fovLength);
 		for(int i = 0; i < lastOnes.size(); i++) {
 			Square tmp = lastOnes.get(i);
-			calculateFOVToSinglePoint(initial, tmp);
+			//calculateFOVToSinglePoint(initial, tmp);
+			List<Square> onLine = getSquaresOnLineNW(initial, tmp);
+			boolean stop = false;
+			for(int j = 0; j < onLine.size() && !stop; j++) {
+				Square s = onLine.get(j);
+				if(getEntityFromLocation(s).blocksFOV()) {
+					stop = true;
+					//System.out.println("Square "+tmp.toStringShort()+" blocks the view!");
+				}
+				addToFOVMap(s);
+			}
 		}
 		
 	}
@@ -510,7 +524,17 @@ public class LEOMapGrid {
 		List<Square> lastOnes = initial.calculateLastFOVSquaresNESector(this.fovLength);
 		for(int i = 0; i < lastOnes.size(); i++) {
 			Square tmp = lastOnes.get(i);
-			calculateFOVToSinglePoint(initial, tmp);
+			//calculateFOVToSinglePoint(initial, tmp);
+			List<Square> onLine = getSquaresOnLineNE(initial, tmp);//calculateFOVToSinglePoint(initial, tmp);
+			boolean stop = false;
+			for(int j = 0; j < onLine.size() && !stop; j++) {
+				Square s = onLine.get(j);
+				if(getEntityFromLocation(s).blocksFOV()) {
+					stop = true;
+					//System.out.println("Square "+tmp.toStringShort()+" blocks the view!");
+				}
+				addToFOVMap(s);
+			}
 		}
 		
 	}
@@ -521,7 +545,17 @@ public class LEOMapGrid {
 		List<Square> lastOnes = initial.calculateLastFOVSquaresSESector(this.fovLength);
 		for(int i = 0; i < lastOnes.size(); i++) {
 			Square tmp = lastOnes.get(i);
-			calculateFOVToSinglePoint(initial, tmp);
+			//calculateFOVToSinglePoint(initial, tmp);
+			List<Square> onLine = getSquaresOnLineSE(initial, tmp);//calculateFOVToSinglePoint(initial, tmp);
+			boolean stop = false;
+			for(int j = 0; j < onLine.size() && !stop; j++) {
+				Square s = onLine.get(j);
+				if(getEntityFromLocation(s).blocksFOV()) {
+					stop = true;
+					//System.out.println("Square "+tmp.toStringShort()+" blocks the view!");
+				}
+				addToFOVMap(s);
+			}
 		}
 		
 	}
@@ -532,7 +566,17 @@ public class LEOMapGrid {
 		List<Square> lastOnes = initial.calculateLastFOVSquaresSWSector(this.fovLength);
 		for(int i = 0; i < lastOnes.size(); i++) {
 			Square tmp = lastOnes.get(i);
-			calculateFOVToSinglePoint(initial, tmp);
+			//calculateFOVToSinglePoint(initial, tmp);
+			List<Square> onLine = getSquaresOnLineSW(initial, tmp);//calculateFOVToSinglePoint(initial, tmp);
+			boolean stop = false;
+			for(int j = 0; j < onLine.size() && !stop; j++) {
+				Square s = onLine.get(j);
+				if(getEntityFromLocation(s).blocksFOV()) {
+					stop = true;
+					//System.out.println("Square "+tmp.toStringShort()+" blocks the view!");
+				}
+				addToFOVMap(s);
+			}
 		}
 		
 	}
@@ -767,13 +811,14 @@ public class LEOMapGrid {
 	
 	private void calculateFOVToSinglePoint(Square startPoint, Square targetPoint) {
 		//System.out.println("TARKISTETAAN RUUTUA "+targetPoint.toStringShort());
+		long time = System.currentTimeMillis();
 		int sector = Square.getPossibleSector(startPoint, targetPoint);
 		ArrayList<Square> nextOnes = startPoint.getPossibleNextSquares(sector);
 		ArrayList<Square> onLine = new ArrayList<Square>();
 		//ArrayList<Integer> codes = new ArrayList<Integer>();
 		Square current = startPoint;
 		boolean outerFlag = true;
-		int code;
+		//int code;
 		
 		while(outerFlag) {
 			
@@ -807,6 +852,8 @@ public class LEOMapGrid {
 		System.out.println("********");*/
 		
 		onLine.add(targetPoint);
+		//time = System.currentTimeMillis()-time;
+		//System.out.println("FOV-tapa1 aika: "+time);
 		//codes.add(1);
 		boolean stop = false;
 		for(int i = 0; i < onLine.size() && !stop; i++) {
@@ -849,4 +896,167 @@ public class LEOMapGrid {
 
 		return onLine;
 	}*/
+	
+	private List<Square> getSquaresOnLineNW(Square startPoint, Square endPoint) {
+		int howManyYs = Math.abs(startPoint.getY()-endPoint.getY());
+		int howManyXs = Math.abs(startPoint.getX()-endPoint.getX());
+		ArrayList<Square> result = new ArrayList<Square>();
+		//System.out.println(howManyXs);
+		//System.out.println(howManyYs);
+		int x;
+		
+		for(int i = startPoint.getX(); i > startPoint.getX()-howManyXs; i--) {
+			Square s = new Square(i, startPoint.getY());
+			x = s.getPixel_x()-LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER;
+			float tmp = (float)((float)(-endPoint.getPixel_y()+startPoint.getPixel_y())/(float)(endPoint.getPixel_x()-startPoint.getPixel_x())*(x-startPoint.getPixel_x())-startPoint.getPixel_y());
+			int tmp2 = (int)Math.abs((tmp/(LEOStaticStrings.SQUARE_SIDE_LENGTH-1)));
+			//System.out.println("tmp21: "+tmp2);
+			result.add(new Square(i, tmp2));
+		}
+		for(int i = startPoint.getY(); i > startPoint.getY()-howManyYs; i--) {
+			Square s = new Square(startPoint.getX(), i);
+			x = -s.getPixel_y()+LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER;
+			float tmp = (float)(x+startPoint.getPixel_y())*((float)(endPoint.getPixel_x()-startPoint.getPixel_x())/(float)(-endPoint.getPixel_y()+startPoint.getPixel_y()))+startPoint.getPixel_x();
+			int tmp2 = (int)Math.abs((tmp/(LEOStaticStrings.SQUARE_SIDE_LENGTH-1)));
+			//System.out.println("tmp22: "+tmp2);
+			Square s2 = new Square(tmp2, i);
+			if(!result.contains(s2)) {
+				result.add(s2);
+			}
+		}
+		
+		if(!result.contains(endPoint)) {
+			result.add(endPoint);
+		}
+		Square.sort(result, Square.NW_SECTOR);
+		/*System.out.println("real");
+		for(int i = 0; i < result.size(); i++) {
+			System.out.println(result.get(i).toStringShort());
+		}*/
+		/*
+		for(int i = 0; i < result.size(); i++) {
+			System.out.println(result.get(i).toStringShort());
+		}*/
+		return result;
+	}
+	
+	private List<Square> getSquaresOnLineSW(Square startPoint, Square endPoint) {
+		int howManyYs = Math.abs(startPoint.getY()-endPoint.getY());
+		int howManyXs = Math.abs(startPoint.getX()-endPoint.getX());
+		ArrayList<Square> result = new ArrayList<Square>();
+		//System.out.println(howManyXs);
+		//System.out.println(howManyYs);
+		int x;
+		
+		for(int i = startPoint.getX(); i > startPoint.getX()-howManyXs; i--) {
+			Square s = new Square(i, startPoint.getY());
+			x = s.getPixel_x()-LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER;
+			float tmp = (float)((float)(-endPoint.getPixel_y()+startPoint.getPixel_y())/(float)(endPoint.getPixel_x()-startPoint.getPixel_x())*(x-startPoint.getPixel_x())-startPoint.getPixel_y());
+			int tmp2 = (int)Math.abs((tmp/(LEOStaticStrings.SQUARE_SIDE_LENGTH-1)));
+			//System.out.println("tmp21: "+tmp2);
+			result.add(new Square(i, tmp2));
+		}
+		for(int i = startPoint.getY(); i < startPoint.getY()+howManyYs; i++) {
+			Square s = new Square(startPoint.getX(), i);
+			x = -s.getPixel_y()-LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER;
+			float tmp = (float)(x+startPoint.getPixel_y())*((float)(endPoint.getPixel_x()-startPoint.getPixel_x())/(float)(-endPoint.getPixel_y()+startPoint.getPixel_y()))+startPoint.getPixel_x();
+			int tmp2 = (int)Math.abs((tmp/(LEOStaticStrings.SQUARE_SIDE_LENGTH-1)));
+			//System.out.println("tmp22: "+tmp2);
+			//System.out.println("tmp2: "+tmp);
+			Square s2 = new Square(tmp2, i);
+			if(!result.contains(s2)) {
+				result.add(s2);
+			}
+		}
+		if(!result.contains(endPoint)) {
+			result.add(endPoint);
+		}
+		Square.sort(result, Square.SW_SECTOR);
+		/*for(int i = 0; i < result.size(); i++) {
+			System.out.println(result.get(i).toStringShort());
+		}*/
+		return result;
+	}
+	
+	private List<Square> getSquaresOnLineNE(Square startPoint, Square endPoint) {
+		int howManyYs = Math.abs(startPoint.getY()-endPoint.getY());
+		int howManyXs = Math.abs(startPoint.getX()-endPoint.getX());
+		ArrayList<Square> result = new ArrayList<Square>();
+		//System.out.println(howManyXs);
+		//System.out.println(howManyYs);
+		int x;
+		
+		for(int i = startPoint.getX(); i < startPoint.getX()+howManyXs; i++) {
+			Square s = new Square(i, startPoint.getY());
+			x = s.getPixel_x()+LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER;
+			float tmp = (float)((float)(-endPoint.getPixel_y()+startPoint.getPixel_y())/(float)(endPoint.getPixel_x()-startPoint.getPixel_x())*(x-startPoint.getPixel_x())-startPoint.getPixel_y());
+			int tmp2 = (int)Math.abs((tmp/(LEOStaticStrings.SQUARE_SIDE_LENGTH-1)));
+			//System.out.println("tmp21: "+tmp2);
+			result.add(new Square(i, tmp2));
+		}
+		for(int i = startPoint.getY(); i > startPoint.getY()-howManyYs; i--) {
+			Square s = new Square(startPoint.getX(), i);
+			x = -s.getPixel_y()+LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER;
+			float tmp = (float)(x+startPoint.getPixel_y())*((float)(endPoint.getPixel_x()-startPoint.getPixel_x())/(float)(-endPoint.getPixel_y()+startPoint.getPixel_y()))+startPoint.getPixel_x();
+			int tmp2 = (int)Math.abs((tmp/(LEOStaticStrings.SQUARE_SIDE_LENGTH-1)));
+			//System.out.println("tmp22: "+tmp2);
+			Square s2 = new Square(tmp2, i);
+			//System.out.println("Add: "+s2.toStringShort());
+			if(!result.contains(s2)) {
+				result.add(s2);
+			}
+		}
+		
+		if(!result.contains(endPoint)) {
+			result.add(endPoint);
+		}
+		Square.sort(result, Square.NE_SECTOR);
+		/*System.out.println("real");
+		for(int i = 0; i < result.size(); i++) {
+			System.out.println(result.get(i).toStringShort());
+		}*/
+		/*for(int i = 0; i < result.size(); i++) {
+			System.out.println(result.get(i).toStringShort());
+		}*/
+		return result;
+	}
+	
+	private List<Square> getSquaresOnLineSE(Square startPoint, Square endPoint) {
+		int howManyYs = Math.abs(startPoint.getY()-endPoint.getY());
+		int howManyXs = Math.abs(startPoint.getX()-endPoint.getX());
+		ArrayList<Square> result = new ArrayList<Square>();
+		//System.out.println(howManyXs);
+		//System.out.println(howManyYs);
+		int x;
+		
+		for(int i = startPoint.getX(); i < startPoint.getX()+howManyXs; i++) {
+			Square s = new Square(i, startPoint.getY());
+			x = s.getPixel_x()+LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER;
+			float tmp = (float)((float)(-endPoint.getPixel_y()+startPoint.getPixel_y())/(float)(endPoint.getPixel_x()-startPoint.getPixel_x())*(x-startPoint.getPixel_x())-startPoint.getPixel_y());
+			int tmp2 = (int)Math.abs((tmp/(LEOStaticStrings.SQUARE_SIDE_LENGTH-1)));
+			//System.out.println("tmp21: "+tmp2);
+			result.add(new Square(i, tmp2));
+		}
+		for(int i = startPoint.getY(); i < startPoint.getY()+howManyYs; i++) {
+			Square s = new Square(startPoint.getX(), i);
+			x = -s.getPixel_y()-LEOStaticStrings.SQUARE_SIDE_HALF_WITHOUT_CENTER;
+			float tmp = (float)(x+startPoint.getPixel_y())*((float)(endPoint.getPixel_x()-startPoint.getPixel_x())/(float)(-endPoint.getPixel_y()+startPoint.getPixel_y()))+startPoint.getPixel_x();
+			int tmp2 = (int)Math.abs((tmp/(LEOStaticStrings.SQUARE_SIDE_LENGTH-1)));
+			//System.out.println("tmp22: "+tmp2);
+			//System.out.println("tmp2: "+tmp);
+			Square s2 = new Square(tmp2, i);
+			if(!result.contains(s2)) {
+				result.add(s2);
+			}
+		}
+		if(!result.contains(endPoint)) {
+			result.add(endPoint);
+		}
+		Square.sort(result, Square.SE_SECTOR);
+		/*for(int i = 0; i < result.size(); i++) {
+			System.out.println(result.get(i).toStringShort());
+		}*/
+		
+		return result;
+	}
 }

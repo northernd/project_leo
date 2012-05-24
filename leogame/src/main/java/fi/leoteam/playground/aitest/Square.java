@@ -1,6 +1,7 @@
 package fi.leoteam.playground.aitest;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -612,6 +613,128 @@ public class Square {
 		}
 		
 		return result;
+	}
+	
+	public static void sort(List<Square> list, int sector) {
+		List<Square> tmp = new ArrayList<Square>();
+		int i,j,x;
+		boolean flag = true;
+		if(sector == NW_SECTOR) {
+			for(i = 0; i < list.size(); i++) {
+				Square s = list.get(i);
+				x = tmp.size();
+				flag = true;
+				for(j = 0; j < tmp.size() && flag; j++) {
+					Square compare = tmp.get(j);
+					if(s.getX() > compare.getX()) {
+						flag = false;
+						x = j;
+					}
+					else if(s.getX() == compare.getX()) {
+						flag = false;
+						if(s.getY() >= compare.getY()) {
+							x = j;
+						}
+						else {
+							x = j+1;
+						}
+					}
+				}
+				tmp.add(x, s);
+			}
+			
+			list.clear();
+			list.addAll(tmp);
+			/*System.out.println("tmp");
+			for(i = 0; i < tmp.size(); i++) {
+				System.out.println(tmp.get(i).toStringShort());
+			}
+			System.out.println("list");
+			for(i = 0; i < list.size(); i++) {
+				System.out.println(list.get(i).toStringShort());
+			}*/
+		}
+		else if (sector == SW_SECTOR) {
+			for(i = 0; i < list.size(); i++) {
+				Square s = list.get(i);
+				x = tmp.size();
+				flag = true;
+				for(j = 0; j < tmp.size() && flag; j++) {
+					Square compare = tmp.get(j);
+					if(s.getX() > compare.getX()) {
+						flag = false;
+						x = j;
+					}
+					else if(s.getX() == compare.getX()) {
+						flag = false;
+						if(s.getY() < compare.getY()) {
+							x = j;
+						}
+						else {
+							x = j+1;
+						}
+					}
+				}
+				tmp.add(x, s);
+			}
+			
+			list.clear();
+			list.addAll(tmp);
+		}
+		else if (sector == NE_SECTOR) {
+			for(i = 0; i < list.size(); i++) {
+				Square s = list.get(i);
+				x = tmp.size();
+				flag = true;
+				for(j = 0; j < tmp.size() && flag; j++) {
+					Square compare = tmp.get(j);
+					if(s.getX() < compare.getX()) {
+						flag = false;
+						x = j;
+					}
+					else if(s.getX() == compare.getX()) {
+						flag = false;
+						if(s.getY() >= compare.getY()) {
+							x = j;
+						}
+						else {
+							x = j+1;
+						}
+					}
+				}
+				tmp.add(x, s);
+			}
+			
+			list.clear();
+			list.addAll(tmp);
+		}
+		else {
+			for(i = 0; i < list.size(); i++) {
+				Square s = list.get(i);
+				x = tmp.size();
+				flag = true;
+				for(j = 0; j < tmp.size() && flag; j++) {
+					Square compare = tmp.get(j);
+					if(s.getX() < compare.getX()) {
+						flag = false;
+						x = j;
+					}
+					else if(s.getX() == compare.getX()) {
+						flag = false;
+						if(s.getY() < compare.getY()) {
+							x = j;
+						}
+						else {
+							x = j+1;
+						}
+					}
+				}
+				tmp.add(x, s);
+			}
+			
+			list.clear();
+			list.addAll(tmp);
+		}
 	}
 	
 }
