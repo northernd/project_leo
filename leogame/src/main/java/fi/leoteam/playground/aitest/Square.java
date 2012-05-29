@@ -41,6 +41,93 @@ public class Square {
 		this(location[0], location[1]);
 	}
 	
+	//Expects that given vertical line is "east-line"
+	protected static FOVSquareList findSquaresVertically(int x, float y, int direction) {
+		
+		FOVSquareList result = new FOVSquareList();
+		Square tmp;
+		y = Math.abs(y);
+		//System.out.println("x: "+x+" y: "+y);
+		y = y-LEOStaticStrings.SQUARE_SIDE_LENGTH;
+		float y_tmp = y;
+		if(y > 0) {
+			y = y/LEOStaticStrings.SQUARE_SIDE_LENGTH_WITHOUT_ONE_SIDE;
+			y_tmp = y-(int)y;
+			if(y_tmp != 0) {
+				y++;
+			}
+		}
+		
+		tmp = new Square(x, (int)y);
+		
+		
+		if(y_tmp == 0) {
+			if(direction == Square.NW_SECTOR) {
+				result.add(tmp);
+				result.add(tmp.getAdjacentSE());
+			}
+			else if (direction == Square.NE_SECTOR) {
+				result.add(tmp);
+				result.add(tmp.getAdjacentNE());
+			}
+			else if (direction == Square.SE_SECTOR) {
+				
+				result.add(tmp.getAdjacentSE());
+			}
+			else {
+				tmp = tmp.getAdjacentS();
+				result.add(tmp);
+				result.add(tmp.getAdjacentNE());
+			}
+			//result.add(tmp.getAdjacentS());
+			//result.add(tmp.getAdjacentSE());
+		}
+		else {
+			result.add(tmp);
+			result.add(tmp.getAdjacentE());
+		}
+		
+		/*System.out.println("Added "+result.size());
+		for(int i = 0; i < result.size(); i++) {
+			System.out.println(result.get(i).toStringShort());
+		}*/
+		
+		return result;
+	}
+	
+	//Expects that given vertical line is "north-line"
+	protected static FOVSquareList findSquaresHorizontally(float x, int y) {
+		FOVSquareList result = new FOVSquareList();
+		Square tmp;
+		x = Math.abs(x);
+		x = x-LEOStaticStrings.SQUARE_SIDE_LENGTH;
+		float x_tmp = x;
+		if(x > 0) {
+			x = x/LEOStaticStrings.SQUARE_SIDE_LENGTH_WITHOUT_ONE_SIDE;
+			x_tmp = x-(int)x;
+			if(x_tmp != 0) {
+				x++;
+			}
+		}
+		
+		tmp = new Square((int)x, y);
+		result.add(tmp);
+		//result.add(tmp.getAdjacentN());
+		/*if(x_tmp == 0) {
+			result.add(tmp.getAdjacentE());
+			result.add(tmp.getAdjacentNE());
+		}*/
+		if(x_tmp != 0) {
+			result.add(tmp.getAdjacentN());
+		}
+		
+		/*for(int i = 0; i < result.size(); i++) {
+			System.out.println(result.get(i).toStringShort());
+		}*/
+		
+		return result;
+	}
+	
 	private void calculateCorners() {
 		int x = (getX() == 0)? 1 : 0;
 		int y = (getY() == 0)? 1 : 0;
@@ -285,7 +372,7 @@ public class Square {
 		return result;
 	}
 	
-	protected float calculateSurfaceAreaRatio(HashMap<Integer, Float> intersections) {
+	protected Float calculateSurfaceAreaRatio(HashMap<Integer, Float> intersections) {
 		float area;
 		if(intersections.containsKey(E_SECTOR) && intersections.containsKey(S_SECTOR)) {
 			area = Math.abs(((se_corner[0]-intersections.get(S_SECTOR))*(se_corner[1]-intersections.get(E_SECTOR))))/2;
@@ -306,7 +393,7 @@ public class Square {
 		return (area/(this.area-area));
 	}
 	
-	public int showSquare(Square startPoint, Square endPoint) {
+	/*public FOVSquareList showSquare(Square startPoint, Square endPoint) {
 		HashMap<Integer, Float> intersections = (HashMap<Integer, Float>)isSquareOnLine(startPoint, endPoint);
 		
 		if(intersections.size() < 2) {
@@ -320,9 +407,9 @@ public class Square {
 			}
 			return 1;
 		}
-	}
+	}*/
 	
-	public Map<Integer, Float> isSquareOnLine(Square startPoint, Square endPoint) {
+	public boolean isSquareOnLine(Square startPoint, Square endPoint) {
 		//System.out.println("Checking square : "+toString());
 		HashMap<Integer, Float> intersections = new HashMap<Integer, Float>();
 		float tmp;
@@ -342,7 +429,7 @@ public class Square {
 			intersections.put(E_SECTOR, tmp);
 		}
 		if(intersections.size() == 2) {
-			return intersections;
+			return true;//calculateSurfaceAreaRatio(intersections);
 		}
 		
 		//North line
@@ -352,7 +439,7 @@ public class Square {
 			intersections.put(N_SECTOR, tmp);
 		}
 		if(intersections.size() == 2) {
-			return intersections;
+			return true;//calculateSurfaceAreaRatio(intersections);
 		}
 		
 		//South line
@@ -362,10 +449,10 @@ public class Square {
 			intersections.put(S_SECTOR, tmp);
 		}
 		if(intersections.size() == 2) {
-			return intersections;
+			return true;//calculateSurfaceAreaRatio(intersections);
 		}
 		
-		return intersections;
+		return false;//0f;
 		
 		//System.out.println("Line doesn't go through square "+getX()+","+getY());
 	}
@@ -396,10 +483,10 @@ public class Square {
 	
 	@Override
 	public String toString() {
-		String result = "Center: ("+getX()+","+getY()+") - Pixel Location: ("+getPixel_x()+","+getPixel_y()+") - Real Y:"+getReal_y();
+		/*String result = "Center: ("+getX()+","+getY()+") - Pixel Location: ("+getPixel_x()+","+getPixel_y()+") - Real Y:"+getReal_y();
 		result += "\n REAL CORNERS: NE ("+ne_corner[0]+","+ne_corner[1]+"), SE ("+se_corner[0]+","+se_corner[1]+"), SW ("+sw_corner[0]+","
-				+sw_corner[1]+"), NW ("+nw_corner[0]+","+nw_corner[1]+")";
-		return result;
+				+sw_corner[1]+"), NW ("+nw_corner[0]+","+nw_corner[1]+")";*/
+		return toStringShort();
 	}
 	
 	public String toStringShort() {
@@ -458,6 +545,7 @@ public class Square {
 	public List<Square> calculateLastFOVSquaresNWSector(int fovlength) {
 		ArrayList<Square> result = new ArrayList<Square>();
 		Square tmp = new Square(getX()-fovlength, getY());
+		result.add(tmp);
 		
 		int multipler = ((fovlength-6)/2)*1+3;
 		
@@ -487,7 +575,7 @@ public class Square {
 			result.add(tmp);
 		}
 		
-		for(int i = 1; i < multipler-1; i++) {
+		for(int i = 1; i < multipler; i++) {
 			tmp = tmp.getAdjacentE();
 			result.add(tmp);
 		}
@@ -498,6 +586,7 @@ public class Square {
 	public List<Square> calculateLastFOVSquaresNESector(int fovlength) {
 		ArrayList<Square> result = new ArrayList<Square>();
 		Square tmp = new Square(getX()+fovlength, getY());
+		result.add(tmp);
 		
 		int multipler = ((fovlength-6)/2)*1+3;
 		
@@ -527,7 +616,7 @@ public class Square {
 			result.add(tmp);
 		}
 		
-		for(int i = 1; i < multipler-1; i++) {
+		for(int i = 1; i < multipler; i++) {
 			tmp = tmp.getAdjacentW();
 			result.add(tmp);
 		}
@@ -538,6 +627,7 @@ public class Square {
 	public List<Square> calculateLastFOVSquaresSESector(int fovlength) {
 		ArrayList<Square> result = new ArrayList<Square>();
 		Square tmp = new Square(getX()+fovlength, getY());
+		result.add(tmp);
 		
 		int multipler = ((fovlength-6)/2)*1+3;
 		
@@ -567,7 +657,7 @@ public class Square {
 			result.add(tmp);
 		}
 		
-		for(int i = 1; i < multipler-1; i++) {
+		for(int i = 1; i < multipler; i++) {
 			tmp = tmp.getAdjacentW();
 			result.add(tmp);
 		}
@@ -578,6 +668,7 @@ public class Square {
 	public List<Square> calculateLastFOVSquaresSWSector(int fovlength) {
 		ArrayList<Square> result = new ArrayList<Square>();
 		Square tmp = new Square(getX()-fovlength, getY());
+		result.add(tmp);
 		
 		int multipler = ((fovlength-6)/2)*1+3;
 		
@@ -607,7 +698,7 @@ public class Square {
 			result.add(tmp);
 		}
 		
-		for(int i = 1; i < multipler-1; i++) {
+		for(int i = 1; i < multipler; i++) {
 			tmp = tmp.getAdjacentE();
 			result.add(tmp);
 		}
@@ -631,13 +722,14 @@ public class Square {
 						x = j;
 					}
 					else if(s.getX() == compare.getX()) {
-						flag = false;
+						//flag = false;
 						if(s.getY() >= compare.getY()) {
 							x = j;
+							flag = false;
 						}
-						else {
+						/*else {
 							x = j+1;
-						}
+						}*/
 					}
 				}
 				tmp.add(x, s);
@@ -666,13 +758,14 @@ public class Square {
 						x = j;
 					}
 					else if(s.getX() == compare.getX()) {
-						flag = false;
+						//flag = false;
 						if(s.getY() < compare.getY()) {
 							x = j;
+							flag = false;
 						}
-						else {
+						/*else {
 							x = j+1;
-						}
+						}*/
 					}
 				}
 				tmp.add(x, s);
@@ -693,13 +786,15 @@ public class Square {
 						x = j;
 					}
 					else if(s.getX() == compare.getX()) {
-						flag = false;
+						//flag = false;
 						if(s.getY() >= compare.getY()) {
 							x = j;
+							flag = false;
 						}
-						else {
+						/*else {
+							//TODO problem when there is already 11,8 and 11,3 and now there is coming 11,6
 							x = j+1;
-						}
+						}*/
 					}
 				}
 				tmp.add(x, s);
@@ -720,13 +815,14 @@ public class Square {
 						x = j;
 					}
 					else if(s.getX() == compare.getX()) {
-						flag = false;
+						//flag = false;
 						if(s.getY() < compare.getY()) {
 							x = j;
+							flag = false;
 						}
-						else {
+						/*else {
 							x = j+1;
-						}
+						}*/
 					}
 				}
 				tmp.add(x, s);
