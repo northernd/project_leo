@@ -229,19 +229,6 @@ public class LEOMapGrid {
 		return true;
 	}
 	
-	private boolean isValidTile(Square s) {
-		boolean result = false;
-		
-		if(s.getY() < 0 && s.getY() >= fovMap.length) {
-			return result;
-		}
-		if(s.getX() < 0 && s.getX() >= fovMap.length) {
-			return result;
-		}
-		
-		return true;
-	}
-	
 	public void calculateFOV(LEOEntity character) {
 		Square point = new Square(character.getLocation());
 		
@@ -708,7 +695,7 @@ private void calculateRemainingAreasNE2(Square initial) {
 		
 	}*/
 	
-	private void calculateMainDirections(Square point) {
+	/*private void calculateMainDirections(Square point) {
 		//North
 		int x, y;
 		int calc = 1;
@@ -764,17 +751,7 @@ private void calculateRemainingAreasNE2(Square initial) {
 			}
 			calc++;
 		}
-	}
-	
-	private boolean isTileVisibleInFOVMap(Square s) {
-		if(isValidTile(s)) {
-			if(fovMap[s.getY()][s.getX()].equals(LEOStaticStrings.OBJECT_STRING_NOT_VISIBLE)) {
-				return false;
-			}
-		}
-
-		return true;
-	}
+	}*/
 	
 	private void insertCharacterToFOVMap(LEOEntity character) {
 		Square point = new Square(character.getLocation());
